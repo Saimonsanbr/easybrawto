@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-macos-arm64:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crystal-lang/install-crystal@v1
+      - run: crystal build src/main.cr -o easybrawto-macos-arm64 --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: easybrawto-macos-arm64
+          path: easybrawto-macos-arm64
+
+  build-linux-x64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crystal-lang/install-crystal@v1
+      - run: crystal build src/main.cr -o easybrawto-linux-x64 --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: easybrawto-linux-x64
+          path: easybrawto-linux-x64
+
+  release:
+    needs: [build-macos-arm64, build-linux-x64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            easybrawto-macos-arm64/easybrawto-macos-arm64
+            easybrawto-linux-x64/easybrawto-linux-x64
