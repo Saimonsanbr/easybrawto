@@ -2,3 +2,4 @@ easybrawto
 easybrawto.dwarf
 *.png
 .crystal/
+.DS_Store
