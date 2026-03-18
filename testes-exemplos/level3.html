@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nxus — Teste easybrawto v3 (React)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #fafaf8;
+            --text: #111;
+            --muted: #888;
+            --accent: #ff4d00;
+            --surface: #f0f0ed;
+            --border: #e0e0db;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        #root {
+            min-height: 100vh;
+        }
+
+        input,
+        select,
+        textarea,
+        button {
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const produtos = [
+            { id: 1, nome: 'Headphone Studio Pro', cat: 'Audio', preco: 'R$ 899,00', antigo: 'R$ 1.199,00' },
+            { id: 2, nome: 'Mesa Dobrável Slim', cat: 'Móveis', preco: 'R$ 459,00', antigo: null },
+            { id: 3, nome: 'Câmera Instantânea Mini', cat: 'Foto', preco: 'R$ 349,00', antigo: 'R$ 429,00' },
+            { id: 4, nome: 'Planta Artificial XL', cat: 'Decoração', preco: 'R$ 129,00', antigo: null },
+            { id: 5, nome: 'Diário Capa Dura A5', cat: 'Papelaria', preco: 'R$ 59,00', antigo: null },
+            { id: 6, nome: 'Luminária de Mesa Arc', cat: 'Decoração', preco: 'R$ 189,00', antigo: 'R$ 249,00' },
+        ];
+
+        function Nav() {
+            const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+            return (
+                <nav style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+                    background: 'var(--bg)', borderBottom: '1px solid var(--border)',
+                    padding: '16px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                }}>
+                    <span style={{ fontFamily: 'DM Mono', fontWeight: 500, fontSize: 18, letterSpacing: 3 }}>NXUS</span>
+                    <div style={{ display: 'flex', gap: 32, fontSize: 13, color: 'var(--muted)' }}>
+                        {['hero', 'produtos', 'contato'].map(id => (
+                            <button key={id} onClick={() => scrollTo(id)} style={{
+                                background: 'none', border: 'none', cursor: 'pointer',
+                                fontSize: 13, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: 1
+                            }}>{id}</button>
+                        ))}
+                    </div>
+                    <button onClick={() => scrollTo('contato')} style={{
+                        background: 'var(--accent)', color: '#fff', border: 'none',
+                        padding: '8px 20px', fontSize: 12, fontWeight: 700, letterSpacing: 1,
+                        textTransform: 'uppercase', cursor: 'pointer'
+                    }}>Contato</button>
+                </nav>
+            );
+        }
+
+        function Hero() {
+            return (
+                <section id="hero" style={{
+                    minHeight: '100vh', display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center', textAlign: 'center',
+                    padding: '120px 48px 80px', borderBottom: '1px solid var(--border)'
+                }}>
+                    <p style={{ fontSize: 11, letterSpacing: 4, color: 'var(--muted)', textTransform: 'uppercase', marginBottom: 24 }}>
+                        Site de teste — easybrawto — React version
+                    </p>
+                    <h1 style={{ fontSize: 'clamp(64px, 10vw, 120px)', fontWeight: 900, lineHeight: 1, letterSpacing: -4, marginBottom: 24 }}>
+                        NX<span style={{ color: 'var(--accent)' }}>US</span>
+                    </h1>
+                    <p style={{ color: 'var(--muted)', fontSize: 16, maxWidth: 440, lineHeight: 1.7, marginBottom: 40 }}>
+                        Loja fictícia em React. Estado gerenciado com hooks. Popups com condições reais. Formulário controlado.
+                    </p>
+                    <div style={{ display: 'flex', gap: 16 }}>
+                        <button onClick={() => document.getElementById('produtos')?.scrollIntoView({ behavior: 'smooth' })} style={{
+                            background: 'var(--text)', color: 'var(--bg)', border: 'none',
+                            padding: '14px 32px', fontSize: 13, fontWeight: 700, letterSpacing: 1, cursor: 'pointer', textTransform: 'uppercase'
+                        }}>Ver produtos</button>
+                        <button onClick={() => document.getElementById('contato')?.scrollIntoView({ behavior: 'smooth' })} style={{
+                            background: 'transparent', color: 'var(--text)', border: '1px solid var(--border)',
+                            padding: '14px 32px', fontSize: 13, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 1
+                        }}>Contato</button>
+                    </div>
+                </section>
+            );
+        }
+
+        function Produtos() {
+            const [busca, setBusca] = useState('');
+            const [categoria, setCategoria] = useState('');
+            const [cart, setCart] = useState([]);
+
+            const filtrados = produtos.filter(p => {
+                const matchBusca = !busca || p.nome.toLowerCase().includes(busca.toLowerCase());
+                const matchCat = !categoria || p.cat.toLowerCase() === categoria.toLowerCase();
+                return matchBusca && matchCat;
+            });
+
+            const adicionar = (nome) => {
+                setCart(c => [...c, nome]);
+                alert('Adicionado ao carrinho: ' + nome + '\nTotal no carrinho: ' + (cart.length + 1));
+            };
+
+            return (
+                <section id="produtos" style={{ padding: '100px 48px', borderBottom: '1px solid var(--border)' }}>
+                    <h2 style={{ fontSize: 40, fontWeight: 900, marginBottom: 8 }}>Produtos</h2>
+                    <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 48 }}>Estado controlado via React hooks.</p>
+
+                    <div style={{ display: 'flex', gap: 12, marginBottom: 40, flexWrap: 'wrap' }}>
+                        <input
+                            type="text"
+                            value={busca}
+                            onChange={e => setBusca(e.target.value)}
+                            placeholder="Buscar produto..."
+                            name="busca"
+                            aria-label="Buscar produto"
+                            style={{
+                                background: 'var(--surface)', border: '1px solid var(--border)',
+                                color: 'var(--text)', padding: '10px 16px', fontSize: 14, width: 260,
+                                outline: 'none'
+                            }}
+                        />
+                        <select
+                            value={categoria}
+                            onChange={e => setCategoria(e.target.value)}
+                            name="categoria"
+                            aria-label="Categoria"
+                            style={{
+                                background: 'var(--surface)', border: '1px solid var(--border)',
+                                color: 'var(--text)', padding: '10px 16px', fontSize: 14, cursor: 'pointer', outline: 'none'
+                            }}
+                        >
+                            <option value="">Todas as categorias</option>
+                            <option value="Audio">Audio</option>
+                            <option value="Móveis">Móveis</option>
+                            <option value="Foto">Foto</option>
+                            <option value="Decoração">Decoração</option>
+                            <option value="Papelaria">Papelaria</option>
+                        </select>
+                        <button
+                            onClick={() => { }}
+                            style={{
+                                background: 'var(--accent)', color: '#fff', border: 'none',
+                                padding: '10px 24px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                textTransform: 'uppercase', letterSpacing: 1
+                            }}
+                        >Buscar</button>
+                    </div>
+
+                    <div style={{
+                        display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                        gap: 1, background: 'var(--border)', border: '1px solid var(--border)'
+                    }}>
+                        {filtrados.map(p => (
+                            <div key={p.id} style={{ background: 'var(--bg)', padding: 32 }}
+                                onMouseEnter={e => e.currentTarget.style.background = 'var(--surface)'}
+                                onMouseLeave={e => e.currentTarget.style.background = 'var(--bg)'}
+                            >
+                                <span style={{
+                                    display: 'inline-block', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase',
+                                    color: 'var(--muted)', border: '1px solid var(--border)', padding: '2px 8px', marginBottom: 16
+                                }}>{p.cat}</span>
+                                <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 8 }}>{p.nome}</h3>
+                                <p style={{ fontSize: 22, fontWeight: 900, color: 'var(--accent)', marginBottom: 16 }}>
+                                    {p.preco}
+                                    {p.antigo && <span style={{ fontSize: 13, fontWeight: 400, color: 'var(--muted)', textDecoration: 'line-through', marginLeft: 8 }}>{p.antigo}</span>}
+                                </p>
+                                <button
+                                    onClick={() => adicionar(p.nome)}
+                                    style={{
+                                        width: '100%', background: 'transparent', border: '1px solid var(--border)',
+                                        color: 'var(--text)', padding: '10px', fontSize: 12, cursor: 'pointer',
+                                        textTransform: 'uppercase', letterSpacing: 1
+                                    }}
+                                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'var(--accent)'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
+                                >Adicionar ao carrinho</button>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            );
+        }
+
+        function Contato() {
+            const [form, setForm] = useState({ nome: '', email: '', assunto: '', mensagem: '', termos: false });
+            const [enviado, setEnviado] = useState(false);
+
+            const handleChange = (e) => {
+                const { name, value, type, checked } = e.target;
+                setForm(f => ({ ...f, [name]: type === 'checkbox' ? checked : value }));
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                setEnviado(true);
+                setForm({ nome: '', email: '', assunto: '', mensagem: '', termos: false });
+                setTimeout(() => setEnviado(false), 4000);
+            };
+
+            return (
+                <section id="contato" style={{ padding: '100px 48px' }}>
+                    <div style={{ maxWidth: 560, margin: '0 auto' }}>
+                        <h2 style={{ fontSize: 40, fontWeight: 900, marginBottom: 8 }}>Contato</h2>
+                        <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 48 }}>Formulário controlado com React state.</p>
+
+                        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                            {[
+                                { label: 'Nome completo', name: 'nome', type: 'text', placeholder: 'Seu nome' },
+                                { label: 'E-mail', name: 'email', type: 'email', placeholder: 'seu@email.com' },
+                            ].map(field => (
+                                <div key={field.name}>
+                                    <label style={{ display: 'block', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 8 }}>{field.label}</label>
+                                    <input
+                                        type={field.type} name={field.name} value={form[field.name]}
+                                        onChange={handleChange} placeholder={field.placeholder}
+                                        style={{
+                                            width: '100%', background: 'var(--surface)', border: '1px solid var(--border)',
+                                            color: 'var(--text)', padding: '12px 16px', fontSize: 14, outline: 'none'
+                                        }}
+                                    />
+                                </div>
+                            ))}
+
+                            <div>
+                                <label style={{ display: 'block', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 8 }}>Assunto</label>
+                                <select name="assunto" value={form.assunto} onChange={handleChange}
+                                    style={{
+                                        width: '100%', background: 'var(--surface)', border: '1px solid var(--border)',
+                                        color: 'var(--text)', padding: '12px 16px', fontSize: 14, cursor: 'pointer', outline: 'none'
+                                    }}>
+                                    <option value="">Selecione um assunto</option>
+                                    <option value="duvida">Dúvida</option>
+                                    <option value="reclamacao">Reclamação</option>
+                                    <option value="elogio">Elogio</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label style={{ display: 'block', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 8 }}>Mensagem</label>
+                                <textarea name="mensagem" value={form.mensagem} onChange={handleChange}
+                                    placeholder="Escreva aqui..." rows={4}
+                                    style={{
+                                        width: '100%', background: 'var(--surface)', border: '1px solid var(--border)',
+                                        color: 'var(--text)', padding: '12px 16px', fontSize: 14, outline: 'none', resize: 'vertical'
+                                    }} />
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <input type="checkbox" id="aceitar-termos" name="termos" checked={form.termos} onChange={handleChange}
+                                    style={{ width: 16, height: 16, cursor: 'pointer', accentColor: 'var(--accent)' }} />
+                                <label htmlFor="aceitar-termos" style={{ fontSize: 12, color: 'var(--muted)', cursor: 'pointer' }}>
+                                    Aceito os termos de uso fictícios
+                                </label>
+                            </div>
+
+                            <button type="submit" style={{
+                                background: 'var(--accent)', color: '#fff', border: 'none',
+                                padding: 16, fontSize: 13, fontWeight: 700, letterSpacing: 2,
+                                textTransform: 'uppercase', cursor: 'pointer'
+                            }}>Enviar mensagem</button>
+
+                            {enviado && (
+                                <div style={{
+                                    border: '1px solid var(--accent)', color: 'var(--accent)',
+                                    padding: '12px 16px', fontSize: 13, letterSpacing: 1
+                                }}>✓ Mensagem enviada com sucesso!</div>
+                            )}
+                        </form>
+                    </div>
+                </section>
+            );
+        }
+
+        function PopupCookie({ onClose }) {
+            return (
+                <div style={{
+                    position: 'fixed', bottom: 32, left: 32, maxWidth: 400,
+                    background: 'var(--bg)', border: '1px solid var(--border)',
+                    padding: 24, zIndex: 999, boxShadow: '0 8px 40px rgba(0,0,0,0.12)'
+                }}>
+                    <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.6, marginBottom: 16 }}>
+                        Usamos cookies fictícios para melhorar sua experiência imaginária.
+                    </p>
+                    <div style={{ display: 'flex', gap: 12 }}>
+                        <button onClick={onClose} style={{
+                            background: 'var(--accent)', color: '#fff', border: 'none',
+                            padding: '8px 20px', fontSize: 12, fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase'
+                        }}>Aceitar cookies</button>
+                        <button onClick={onClose} style={{
+                            background: 'transparent', color: 'var(--muted)', border: '1px solid var(--border)',
+                            padding: '8px 20px', fontSize: 12, cursor: 'pointer', textTransform: 'uppercase'
+                        }}>Rejeitar</button>
+                    </div>
+                </div>
+            );
+        }
+
+        function PopupNewsletter({ onClose }) {
+            const [email, setEmail] = useState('');
+            return (
+                <div style={{
+                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999
+                }}>
+                    <div style={{
+                        background: 'var(--bg)', border: '1px solid var(--border)',
+                        padding: 48, maxWidth: 400, width: '90%', textAlign: 'center'
+                    }}>
+                        <h3 style={{ fontSize: 24, fontWeight: 900, marginBottom: 12 }}>Ei, não vai embora!</h3>
+                        <p style={{ color: 'var(--muted)', fontSize: 12, lineHeight: 1.6, marginBottom: 24 }}>
+                            Cadastre-se e receba ofertas que não existem de verdade.
+                        </p>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            placeholder="seu@email.com"
+                            name="email-newsletter"
+                            aria-label="E-mail para newsletter"
+                            style={{
+                                width: '100%', background: 'var(--surface)', border: '1px solid var(--border)',
+                                color: 'var(--text)', padding: '12px 16px', fontSize: 14, outline: 'none', marginBottom: 12
+                            }}
+                        />
+                        <button onClick={onClose} style={{
+                            width: '100%', background: 'var(--accent)', color: '#fff', border: 'none',
+                            padding: 12, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                            textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12
+                        }}>Quero receber!</button>
+                        <button onClick={onClose} style={{
+                            background: 'none', border: 'none', color: 'var(--muted)',
+                            fontSize: 11, cursor: 'pointer', textDecoration: 'underline'
+                        }}>Agora não</button>
+                    </div>
+                </div>
+            );
+        }
+
+        function App() {
+            const [showCookie, setShowCookie] = useState(false);
+            const [showNewsletter, setShowNewsletter] = useState(false);
+            const newsletterShown = useRef(false);
+
+            useEffect(() => {
+                const t1 = setTimeout(() => setShowCookie(true), 2000);
+
+                const t2 = setTimeout(() => {
+                    if (!newsletterShown.current) {
+                        newsletterShown.current = true;
+                        setShowNewsletter(true);
+                    }
+                }, 15000);
+
+                const handleScroll = () => {
+                    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+                    if (pct > 0.6 && !newsletterShown.current) {
+                        newsletterShown.current = true;
+                        setShowNewsletter(true);
+                    }
+                };
+
+                window.addEventListener('scroll', handleScroll);
+                return () => { clearTimeout(t1); clearTimeout(t2); window.removeEventListener('scroll', handleScroll); };
+            }, []);
+
+            return (
+                <>
+                    <Nav />
+                    <Hero />
+                    <Produtos />
+                    <Contato />
+                    <footer style={{
+                        borderTop: '1px solid var(--border)', padding: '40px 48px',
+                        textAlign: 'center', color: 'var(--muted)', fontSize: 11, letterSpacing: 1, textTransform: 'uppercase'
+                    }}>
+                        NXUS © 2026 — Site fictício para testes de automação — easybrawto
+                    </footer>
+                    {showCookie && <PopupCookie onClose={() => setShowCookie(false)} />}
+                    {showNewsletter && <PopupNewsletter onClose={() => setShowNewsletter(false)} />}
+                </>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+
+</html>

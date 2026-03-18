@@ -1,0 +1,26 @@
+chrome.persistProfile('teste')
+
+functions testarNextStyle {
+  .navigate('http://127.0.0.1:5500/testes-exemplos/level4.html')
+  .waitLoad()
+  .waitSeconds(3)
+  .clickIfExists('Aceitar cookies')
+  .scroll('down', 600)
+  .insertText('busca', 'webcam')
+  .clickButton('Buscar')
+  .waitSeconds(1)
+  .scroll('bottom')
+  .waitSeconds(3)
+  .clickIfExists('Agora não, obrigado')
+  .insertText('nome', 'Ana Lima')             # usa name="nome"
+  .insertText('email', 'ana@email.com')        # usa name="email"  
+  .selectOption('assunto', 'Parceria')         # usa name="assunto"
+  .insertText('mensagem', 'Hash não me parou!')
+  .checkBox('aceitar-termos')
+  .clickButton('Enviar mensagem')
+  .waitForText('Mensagem enviada')
+  .screenshot('site4-ok.png')
+  .log('Next.js style vencido!')
+}
+
+run testarNextStyle

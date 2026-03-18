@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prism — Teste easybrawto v4 (Next.js style)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Simula classes geradas por CSS Modules / styled-components / Tailwind JIT */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --c-bg: #f8f5f0;
+            --c-ink: #1a1410;
+            --c-soft: #c8bfb0;
+            --c-accent: #d4420a;
+            --c-surface: #efe9e0;
+            --c-border: #ddd5c8;
+        }
+
+        body {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            background: var(--c-bg);
+            color: var(--c-ink);
+        }
+
+        /* Classes com hashes simulando CSS Modules */
+        ._nav_x7k2p {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            background: var(--c-bg);
+            border-bottom: 1px solid var(--c-border);
+            padding: 0 48px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        ._logo_x7k2p {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        ._logo_x7k2p span {
+            color: var(--c-accent);
+        }
+
+        ._navItems_x7k2p {
+            display: flex;
+            gap: 32px;
+        }
+
+        ._navItem_x7k2p {
+            font-size: 13px;
+            color: var(--c-soft);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+            letter-spacing: 0.5px;
+        }
+
+        ._navItem_x7k2p:hover {
+            color: var(--c-ink);
+        }
+
+        ._navCta_x7k2p {
+            background: var(--c-ink);
+            color: var(--c-bg);
+            border: none;
+            padding: 9px 22px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            border-radius: 2px;
+        }
+
+        ._navCta_x7k2p:hover {
+            background: var(--c-accent);
+        }
+
+        ._hero_3m9qr {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 100px 48px 80px;
+            border-bottom: 1px solid var(--c-border);
+            text-align: center;
+        }
+
+        ._heroEyebrow_3m9qr {
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--c-soft);
+            margin-bottom: 20px;
+        }
+
+        ._heroTitle_3m9qr {
+            font-size: clamp(56px, 9vw, 110px);
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -3px;
+            margin-bottom: 24px;
+        }
+
+        ._heroTitle_3m9qr em {
+            font-style: normal;
+            color: var(--c-accent);
+        }
+
+        ._heroSub_3m9qr {
+            font-size: 16px;
+            color: var(--c-soft);
+            max-width: 420px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        ._heroCtas_3m9qr {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        ._btnPrimary_3m9qr {
+            background: var(--c-ink);
+            color: var(--c-bg);
+            border: none;
+            padding: 14px 32px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        ._btnPrimary_3m9qr:hover {
+            background: var(--c-accent);
+        }
+
+        ._btnOutline_3m9qr {
+            background: transparent;
+            color: var(--c-ink);
+            border: 1px solid var(--c-border);
+            padding: 14px 32px;
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        ._btnOutline_3m9qr:hover {
+            border-color: var(--c-ink);
+        }
+
+        ._section_9xp1k {
+            padding: 96px 48px;
+            border-bottom: 1px solid var(--c-border);
+        }
+
+        ._sectionHead_9xp1k {
+            margin-bottom: 48px;
+        }
+
+        ._sectionTitle_9xp1k {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 6px;
+        }
+
+        ._sectionSub_9xp1k {
+            color: var(--c-soft);
+            font-size: 14px;
+        }
+
+        ._filterRow_9xp1k {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+        }
+
+        ._filterInput_9xp1k {
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            color: var(--c-ink);
+            padding: 10px 16px;
+            font-family: inherit;
+            font-size: 14px;
+            width: 260px;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        ._filterInput_9xp1k::placeholder {
+            color: var(--c-soft);
+        }
+
+        ._filterInput_9xp1k:focus {
+            border-color: var(--c-ink);
+        }
+
+        ._filterSelect_9xp1k {
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            color: var(--c-ink);
+            padding: 10px 16px;
+            font-family: inherit;
+            font-size: 14px;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        ._filterSelect_9xp1k:focus {
+            border-color: var(--c-ink);
+        }
+
+        ._filterBtn_9xp1k {
+            background: var(--c-ink);
+            color: var(--c-bg);
+            border: none;
+            padding: 10px 24px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        ._grid_9xp1k {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        ._card_9xp1k {
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            padding: 28px;
+            border-radius: 4px;
+            transition: box-shadow 0.2s;
+        }
+
+        ._card_9xp1k:hover {
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        ._cardBadge_9xp1k {
+            display: inline-block;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--c-soft);
+            background: var(--c-bg);
+            border: 1px solid var(--c-border);
+            padding: 2px 8px;
+            border-radius: 2px;
+            margin-bottom: 14px;
+        }
+
+        ._cardTitle_9xp1k {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        ._cardPrice_9xp1k {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--c-accent);
+            margin-bottom: 4px;
+        }
+
+        ._cardPriceOld_9xp1k {
+            font-size: 12px;
+            color: var(--c-soft);
+            text-decoration: line-through;
+            margin-left: 6px;
+            font-weight: 400;
+        }
+
+        ._cardBtn_9xp1k {
+            width: 100%;
+            background: var(--c-bg);
+            border: 1px solid var(--c-border);
+            color: var(--c-ink);
+            padding: 10px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 2px;
+            margin-top: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        ._cardBtn_9xp1k:hover {
+            background: var(--c-ink);
+            color: var(--c-bg);
+            border-color: var(--c-ink);
+        }
+
+        ._formSection_4vw8n {
+            padding: 96px 48px;
+        }
+
+        ._formWrap_4vw8n {
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        ._formGroup_4vw8n {
+            margin-bottom: 20px;
+        }
+
+        ._formLabel_4vw8n {
+            display: block;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--c-soft);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        ._formInput_4vw8n {
+            width: 100%;
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            color: var(--c-ink);
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 14px;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        ._formInput_4vw8n::placeholder {
+            color: var(--c-soft);
+        }
+
+        ._formInput_4vw8n:focus {
+            border-color: var(--c-ink);
+        }
+
+        ._formSelect_4vw8n {
+            width: 100%;
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            color: var(--c-ink);
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 14px;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        ._formTextarea_4vw8n {
+            width: 100%;
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            color: var(--c-ink);
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 14px;
+            border-radius: 2px;
+            outline: none;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        ._formCheck_4vw8n {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        ._formCheck_4vw8n input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--c-accent);
+            cursor: pointer;
+        }
+
+        ._formCheck_4vw8n label {
+            font-size: 13px;
+            color: var(--c-soft);
+            cursor: pointer;
+        }
+
+        ._formSubmit_4vw8n {
+            width: 100%;
+            background: var(--c-accent);
+            color: #fff;
+            border: none;
+            padding: 16px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 2px;
+            letter-spacing: 1px;
+        }
+
+        ._formSubmit_4vw8n:hover {
+            background: var(--c-ink);
+        }
+
+        ._formSuccess_4vw8n {
+            display: none;
+            background: #f0faf0;
+            border: 1px solid #9de89d;
+            color: #2a6e2a;
+            padding: 12px 16px;
+            font-size: 13px;
+            margin-top: 16px;
+            border-radius: 2px;
+        }
+
+        ._footer_zq3lp {
+            border-top: 1px solid var(--c-border);
+            padding: 32px 48px;
+            text-align: center;
+            color: var(--c-soft);
+            font-size: 12px;
+        }
+
+        /* Popups */
+        ._cookieBanner_popup {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            right: 24px;
+            max-width: 460px;
+            background: var(--c-ink);
+            color: var(--c-bg);
+            padding: 20px 24px;
+            z-index: 999;
+            border-radius: 4px;
+            display: none;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        ._cookieBanner_popup p {
+            font-size: 13px;
+            opacity: 0.8;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        ._cookieActions_popup {
+            display: flex;
+            gap: 10px;
+        }
+
+        ._cookieAccept_popup {
+            background: var(--c-accent);
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        ._cookieReject_popup {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        ._modalOverlay_popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(26, 20, 16, 0.7);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        ._modal_popup {
+            background: var(--c-bg);
+            border: 1px solid var(--c-border);
+            padding: 48px;
+            max-width: 420px;
+            width: 90%;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        ._modalTitle_popup {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+        }
+
+        ._modalSub_popup {
+            font-size: 13px;
+            color: var(--c-soft);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        ._modalInput_popup {
+            width: 100%;
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            color: var(--c-ink);
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 14px;
+            border-radius: 2px;
+            outline: none;
+            margin-bottom: 12px;
+        }
+
+        ._modalInput_popup::placeholder {
+            color: var(--c-soft);
+        }
+
+        ._modalBtn_popup {
+            width: 100%;
+            background: var(--c-accent);
+            color: #fff;
+            border: none;
+            padding: 13px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 2px;
+            margin-bottom: 10px;
+        }
+
+        ._modalDismiss_popup {
+            background: none;
+            border: none;
+            color: var(--c-soft);
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV — data-nextjs-scroll-focus-boundary simula Next.js -->
+    <nav class="_nav_x7k2p" data-nextjs-scroll-focus-boundary>
+        <div class="_logo_x7k2p">PRI<span>SM</span></div>
+        <div class="_navItems_x7k2p">
+            <button class="_navItem_x7k2p"
+                onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'})">Início</button>
+            <button class="_navItem_x7k2p"
+                onclick="document.getElementById('produtos').scrollIntoView({behavior:'smooth'})">Produtos</button>
+            <button class="_navItem_x7k2p"
+                onclick="document.getElementById('contato').scrollIntoView({behavior:'smooth'})">Contato</button>
+        </div>
+        <button class="_navCta_x7k2p" onclick="document.getElementById('contato').scrollIntoView({behavior:'smooth'})">
+            Falar conosco
+        </button>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero" class="_hero_3m9qr">
+        <div>
+            <p class="_heroEyebrow_3m9qr">Site de teste — easybrawto — Next.js style</p>
+            <h1 class="_heroTitle_3m9qr">PRI<em>SM</em><br>STORE</h1>
+            <p class="_heroSub_3m9qr">
+                Loja fictícia com classes estilo CSS Modules. Data-attributes. Estrutura que sites Next.js reais usam.
+            </p>
+            <div class="_heroCtas_3m9qr">
+                <button class="_btnPrimary_3m9qr"
+                    onclick="document.getElementById('produtos').scrollIntoView({behavior:'smooth'})">
+                    Ver produtos
+                </button>
+                <button class="_btnOutline_3m9qr"
+                    onclick="document.getElementById('contato').scrollIntoView({behavior:'smooth'})">
+                    Saiba mais
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUTOS -->
+    <section id="produtos" class="_section_9xp1k">
+        <div class="_sectionHead_9xp1k">
+            <h2 class="_sectionTitle_9xp1k">Produtos</h2>
+            <p class="_sectionSub_9xp1k">Classes geradas simulando Next.js + CSS Modules</p>
+        </div>
+
+        <div class="_filterRow_9xp1k">
+            <!-- name e aria-label são os seletores confiáveis aqui -->
+            <input class="_filterInput_9xp1k" type="text" id="campo-busca" name="busca" placeholder="Buscar produto..."
+                aria-label="Buscar produto">
+            <select class="_filterSelect_9xp1k" id="filtro-categoria" name="categoria" aria-label="Categoria">
+                <option value="">Todas as categorias</option>
+                <option value="tech">Tech</option>
+                <option value="casa">Casa</option>
+                <option value="moda">Moda</option>
+                <option value="arte">Arte</option>
+            </select>
+            <button class="_filterBtn_9xp1k" onclick="filtrarProdutos()">Buscar</button>
+        </div>
+
+        <div class="_grid_9xp1k" id="grid-produtos">
+            <div class="_card_9xp1k produto" data-product-id="1" data-category="tech">
+                <span class="_cardBadge_9xp1k">Tech</span>
+                <h3 class="_cardTitle_9xp1k">Webcam 4K Ultra</h3>
+                <p class="_cardPrice_9xp1k">R$ 549,00 <span class="_cardPriceOld_9xp1k">R$ 749,00</span></p>
+                <button class="_cardBtn_9xp1k" data-action="add-to-cart"
+                    onclick="adicionarCarrinho('Webcam 4K Ultra')">Adicionar ao carrinho</button>
+            </div>
+            <div class="_card_9xp1k produto" data-product-id="2" data-category="casa">
+                <span class="_cardBadge_9xp1k">Casa</span>
+                <h3 class="_cardTitle_9xp1k">Difusor de Aroma Smart</h3>
+                <p class="_cardPrice_9xp1k">R$ 179,00</p>
+                <button class="_cardBtn_9xp1k" data-action="add-to-cart"
+                    onclick="adicionarCarrinho('Difusor de Aroma Smart')">Adicionar ao carrinho</button>
+            </div>
+            <div class="_card_9xp1k produto" data-product-id="3" data-category="moda">
+                <span class="_cardBadge_9xp1k">Moda</span>
+                <h3 class="_cardTitle_9xp1k">Bolsa Canvas Minimalista</h3>
+                <p class="_cardPrice_9xp1k">R$ 219,00 <span class="_cardPriceOld_9xp1k">R$ 289,00</span></p>
+                <button class="_cardBtn_9xp1k" data-action="add-to-cart"
+                    onclick="adicionarCarrinho('Bolsa Canvas')">Adicionar ao carrinho</button>
+            </div>
+            <div class="_card_9xp1k produto" data-product-id="4" data-category="arte">
+                <span class="_cardBadge_9xp1k">Arte</span>
+                <h3 class="_cardTitle_9xp1k">Sketchbook A4 Premium</h3>
+                <p class="_cardPrice_9xp1k">R$ 89,00</p>
+                <button class="_cardBtn_9xp1k" data-action="add-to-cart"
+                    onclick="adicionarCarrinho('Sketchbook A4')">Adicionar ao carrinho</button>
+            </div>
+            <div class="_card_9xp1k produto" data-product-id="5" data-category="tech">
+                <span class="_cardBadge_9xp1k">Tech</span>
+                <h3 class="_cardTitle_9xp1k">SSD Externo 1TB</h3>
+                <p class="_cardPrice_9xp1k">R$ 399,00</p>
+                <button class="_cardBtn_9xp1k" data-action="add-to-cart"
+                    onclick="adicionarCarrinho('SSD Externo 1TB')">Adicionar ao carrinho</button>
+            </div>
+            <div class="_card_9xp1k produto" data-product-id="6" data-category="casa">
+                <span class="_cardBadge_9xp1k">Casa</span>
+                <h3 class="_cardTitle_9xp1k">Vela Aromática XG</h3>
+                <p class="_cardPrice_9xp1k">R$ 69,00</p>
+                <button class="_cardBtn_9xp1k" data-action="add-to-cart"
+                    onclick="adicionarCarrinho('Vela Aromática')">Adicionar ao carrinho</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section id="contato" class="_formSection_4vw8n">
+        <div class="_formWrap_4vw8n">
+            <div class="_sectionHead_9xp1k">
+                <h2 class="_sectionTitle_9xp1k">Contato</h2>
+                <p class="_sectionSub_9xp1k">Formulário com IDs estilo Next.js — use name ou aria-label para selecionar
+                </p>
+            </div>
+
+            <form id="form-contato" onsubmit="enviarForm(event)">
+                <div class="_formGroup_4vw8n">
+                    <label class="_formLabel_4vw8n" for="input-nome">Nome completo</label>
+                    <input class="_formInput_4vw8n" type="text" id="input-nome" name="nome"
+                        placeholder="Seu nome completo" aria-label="Nome completo">
+                </div>
+                <div class="_formGroup_4vw8n">
+                    <label class="_formLabel_4vw8n" for="input-email">E-mail</label>
+                    <input class="_formInput_4vw8n" type="email" id="input-email" name="email"
+                        placeholder="seu@email.com" aria-label="E-mail">
+                </div>
+                <div class="_formGroup_4vw8n">
+                    <label class="_formLabel_4vw8n" for="input-assunto">Assunto</label>
+                    <select class="_formSelect_4vw8n" id="input-assunto" name="assunto" aria-label="Assunto">
+                        <option value="">Selecione um assunto</option>
+                        <option value="duvida">Dúvida</option>
+                        <option value="reclamacao">Reclamação</option>
+                        <option value="elogio">Elogio</option>
+                        <option value="parceria">Parceria</option>
+                    </select>
+                </div>
+                <div class="_formGroup_4vw8n">
+                    <label class="_formLabel_4vw8n" for="input-mensagem">Mensagem</label>
+                    <textarea class="_formTextarea_4vw8n" id="input-mensagem" name="mensagem"
+                        placeholder="Escreva sua mensagem..." aria-label="Mensagem"></textarea>
+                </div>
+                <div class="_formCheck_4vw8n">
+                    <input type="checkbox" id="aceitar-termos" name="termos">
+                    <label for="aceitar-termos">Li e aceito os termos de uso fictícios</label>
+                </div>
+                <button type="submit" class="_formSubmit_4vw8n">Enviar mensagem</button>
+                <div id="success-msg" class="_formSuccess_4vw8n">✓ Mensagem enviada com sucesso!</div>
+            </form>
+        </div>
+    </section>
+
+    <footer class="_footer_zq3lp">
+        PRISM STORE © 2026 — Site fictício para testes de automação — easybrawto
+    </footer>
+
+    <!-- POPUP COOKIE -->
+    <div id="popup-cookie" class="_cookieBanner_popup">
+        <p>Este site usa cookies fictícios para rastrear suas compras imaginárias e vender seus dados para ninguém.</p>
+        <div class="_cookieActions_popup">
+            <button class="_cookieAccept_popup" onclick="fecharCookie()">Aceitar cookies</button>
+            <button class="_cookieReject_popup" onclick="fecharCookie()">Só o necessário</button>
+        </div>
+    </div>
+
+    <!-- POPUP NEWSLETTER -->
+    <div id="popup-newsletter" class="_modalOverlay_popup">
+        <div class="_modal_popup">
+            <h3 class="_modalTitle_popup">Espera um segundo!</h3>
+            <p class="_modalSub_popup">Cadastre seu e-mail e finja que vai receber descontos exclusivos.</p>
+            <input class="_modalInput_popup" type="email" id="email-newsletter" name="email-newsletter"
+                placeholder="seu@email.com" aria-label="E-mail para newsletter">
+            <button class="_modalBtn_popup" onclick="fecharNewsletter()">Quero receber!</button>
+            <button class="_modalDismiss_popup" onclick="fecharNewsletter()">Agora não, obrigado</button>
+        </div>
+    </div>
+
+    <script>
+        // Popup cookie
+        setTimeout(() => {
+            document.getElementById('popup-cookie').style.display = 'block';
+        }, 2000);
+
+        // Popup newsletter
+        let shown = false;
+        function mostrarNewsletter() {
+            if (shown) return;
+            shown = true;
+            const el = document.getElementById('popup-newsletter');
+            el.style.display = 'flex';
+        }
+        setTimeout(mostrarNewsletter, 15000);
+        window.addEventListener('scroll', () => {
+            if (window.scrollY / (document.body.scrollHeight - window.innerHeight) > 0.6) mostrarNewsletter();
+        });
+
+        function fecharCookie() { document.getElementById('popup-cookie').style.display = 'none'; }
+        function fecharNewsletter() { document.getElementById('popup-newsletter').style.display = 'none'; }
+
+        function adicionarCarrinho(nome) {
+            alert('Adicionado: ' + nome + '\n(Evento disparado via data-action="add-to-cart")');
+        }
+
+        function filtrarProdutos() {
+            const busca = document.getElementById('campo-busca').value.toLowerCase();
+            document.querySelectorAll('.produto').forEach(p => {
+                const nome = p.querySelector('h3').textContent.toLowerCase();
+                p.style.display = !busca || nome.includes(busca) ? 'block' : 'none';
+            });
+        }
+
+        function enviarForm(e) {
+            e.preventDefault();
+            const msg = document.getElementById('success-msg');
+            msg.style.display = 'block';
+            e.target.reset();
+            setTimeout(() => msg.style.display = 'none', 4000);
+        }
+    </script>
+</body>
+
+</html>

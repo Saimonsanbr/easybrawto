@@ -1,0 +1,24 @@
+chrome.persistProfile('teste')
+
+functions preencherFormulario {
+  .navigate('http://127.0.0.1:5500/testes-exemplos/level2.html')
+  .waitLoad()
+  .waitSeconds(3)
+  .clickIfExists('Aceitar cookies')
+  .scroll('down', 500)
+  .insertText('busca', 'mouse')
+  .selectOption('categoria', 'Eletrônicos')
+  .clickButton('Buscar')
+  .scroll('bottom')
+  .waitSeconds(2)
+  .clickIfExists('Agora não')
+  .insertText('nome', 'Maria Costa')
+  .insertText('email', 'maria@email.com')
+  .selectOption('assunto', 'Elogio')
+  .insertText('mensagem', 'Tailwind não me parou!')
+  .clickButton('Enviar mensagem')
+  .waitForText('Mensagem enviada')
+  .screenshot('site2-ok.png')
+}
+
+run preencherFormulario

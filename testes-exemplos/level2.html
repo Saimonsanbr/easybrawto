@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voltr — Teste easybrawto v2 (Tailwind)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        volt: '#b5ff3e',
+                        dark: '#0a0a0a',
+                        surface: '#141414',
+                        border: '#232323',
+                    },
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-dark text-white min-h-screen">
+
+    <!-- NAV -->
+    <nav
+        class="fixed top-0 left-0 right-0 z-50 bg-dark border-b border-border px-8 py-4 flex items-center justify-between">
+        <span class="text-volt font-black text-xl tracking-widest">VOLTR</span>
+        <div class="hidden md:flex gap-8 text-xs text-zinc-500 uppercase tracking-widest">
+            <a href="#hero" class="hover:text-white transition">Início</a>
+            <a href="#produtos" class="hover:text-white transition">Produtos</a>
+            <a href="#contato" class="hover:text-white transition">Contato</a>
+        </div>
+        <button onclick="document.getElementById('contato').scrollIntoView({behavior:'smooth'})"
+            class="bg-volt text-black text-xs font-bold px-5 py-2 uppercase tracking-widest hover:bg-white transition">
+            Contato
+        </button>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero"
+        class="min-h-screen flex flex-col items-center justify-center text-center px-8 pt-24 border-b border-border">
+        <div class="fade-in">
+            <p class="text-xs text-zinc-600 uppercase tracking-[4px] mb-6">Site de teste — easybrawto</p>
+            <h1 class="text-7xl md:text-9xl font-black leading-none tracking-tighter mb-6">
+                VOL<span class="text-volt">TR</span>
+            </h1>
+            <p class="text-zinc-500 text-base max-w-md mx-auto leading-relaxed mb-10">
+                Loja fictícia com Tailwind CSS. Todos os campos funcionam para automação. Popups aparecem de verdade.
+            </p>
+            <div class="flex gap-4 justify-center flex-wrap">
+                <button onclick="document.getElementById('produtos').scrollIntoView({behavior:'smooth'})"
+                    class="bg-volt text-black font-bold px-8 py-3 text-sm uppercase tracking-widest hover:bg-white transition">
+                    Ver produtos
+                </button>
+                <button onclick="document.getElementById('contato').scrollIntoView({behavior:'smooth'})"
+                    class="border border-border text-zinc-400 px-8 py-3 text-sm uppercase tracking-widest hover:border-volt hover:text-volt transition">
+                    Contato
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUTOS -->
+    <section id="produtos" class="py-24 px-8 border-b border-border">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-4xl font-black mb-2">Produtos</h2>
+            <p class="text-zinc-600 text-sm mb-12">Itens fictícios. Clique em qualquer coisa.</p>
+
+            <!-- Filtros -->
+            <div class="flex flex-wrap gap-3 mb-10">
+                <input type="text" id="campo-busca" name="busca" placeholder="Buscar produto..."
+                    aria-label="Buscar produto"
+                    class="bg-surface border border-border text-white px-4 py-2 text-sm w-64 focus:outline-none focus:border-volt placeholder-zinc-600">
+                <select id="filtro-categoria" name="categoria" aria-label="Categoria"
+                    class="bg-surface border border-border text-white px-4 py-2 text-sm focus:outline-none focus:border-volt cursor-pointer">
+                    <option value="">Todas as categorias</option>
+                    <option value="eletronicos">Eletrônicos</option>
+                    <option value="roupas">Roupas</option>
+                    <option value="livros">Livros</option>
+                    <option value="games">Games</option>
+                </select>
+                <button onclick="filtrarProdutos()"
+                    class="bg-volt text-black font-bold px-6 py-2 text-sm uppercase tracking-widest hover:bg-white transition">
+                    Buscar
+                </button>
+            </div>
+
+            <!-- Grid -->
+            <div id="grid-produtos"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border border border-border">
+                <div class="produto bg-dark p-8 hover:bg-surface transition">
+                    <span
+                        class="text-xs text-zinc-600 uppercase tracking-widest border border-border px-2 py-1 mb-4 inline-block">Eletrônicos</span>
+                    <h3 class="text-lg font-bold mb-2">Teclado Mecânico X1</h3>
+                    <p class="text-volt text-2xl font-black mb-1">R$ 349,00 <span
+                            class="text-zinc-600 text-sm font-normal line-through ml-2">R$ 499,00</span></p>
+                    <button onclick="adicionarCarrinho('Teclado Mecânico X1')"
+                        class="w-full border border-border text-sm py-2 mt-4 uppercase tracking-widest hover:bg-volt hover:text-black hover:border-volt transition">Adicionar</button>
+                </div>
+                <div class="produto bg-dark p-8 hover:bg-surface transition">
+                    <span
+                        class="text-xs text-zinc-600 uppercase tracking-widest border border-border px-2 py-1 mb-4 inline-block">Eletrônicos</span>
+                    <h3 class="text-lg font-bold mb-2">Mouse Sem Fio Pro</h3>
+                    <p class="text-volt text-2xl font-black mb-1">R$ 189,00</p>
+                    <button onclick="adicionarCarrinho('Mouse Sem Fio Pro')"
+                        class="w-full border border-border text-sm py-2 mt-4 uppercase tracking-widest hover:bg-volt hover:text-black hover:border-volt transition">Adicionar</button>
+                </div>
+                <div class="produto bg-dark p-8 hover:bg-surface transition">
+                    <span
+                        class="text-xs text-zinc-600 uppercase tracking-widest border border-border px-2 py-1 mb-4 inline-block">Roupas</span>
+                    <h3 class="text-lg font-bold mb-2">Camiseta Dev Black</h3>
+                    <p class="text-volt text-2xl font-black mb-1">R$ 79,00</p>
+                    <button onclick="adicionarCarrinho('Camiseta Dev Black')"
+                        class="w-full border border-border text-sm py-2 mt-4 uppercase tracking-widest hover:bg-volt hover:text-black hover:border-volt transition">Adicionar</button>
+                </div>
+                <div class="produto bg-dark p-8 hover:bg-surface transition">
+                    <span
+                        class="text-xs text-zinc-600 uppercase tracking-widest border border-border px-2 py-1 mb-4 inline-block">Livros</span>
+                    <h3 class="text-lg font-bold mb-2">Clean Code — Edição BR</h3>
+                    <p class="text-volt text-2xl font-black mb-1">R$ 129,00 <span
+                            class="text-zinc-600 text-sm font-normal line-through ml-2">R$ 159,00</span></p>
+                    <button onclick="adicionarCarrinho('Clean Code')"
+                        class="w-full border border-border text-sm py-2 mt-4 uppercase tracking-widest hover:bg-volt hover:text-black hover:border-volt transition">Adicionar</button>
+                </div>
+                <div class="produto bg-dark p-8 hover:bg-surface transition">
+                    <span
+                        class="text-xs text-zinc-600 uppercase tracking-widest border border-border px-2 py-1 mb-4 inline-block">Games</span>
+                    <h3 class="text-lg font-bold mb-2">Controle Retrô USB</h3>
+                    <p class="text-volt text-2xl font-black mb-1">R$ 99,00</p>
+                    <button onclick="adicionarCarrinho('Controle Retrô USB')"
+                        class="w-full border border-border text-sm py-2 mt-4 uppercase tracking-widest hover:bg-volt hover:text-black hover:border-volt transition">Adicionar</button>
+                </div>
+                <div class="produto bg-dark p-8 hover:bg-surface transition">
+                    <span
+                        class="text-xs text-zinc-600 uppercase tracking-widest border border-border px-2 py-1 mb-4 inline-block">Eletrônicos</span>
+                    <h3 class="text-lg font-bold mb-2">Hub USB-C 7 portas</h3>
+                    <p class="text-volt text-2xl font-black mb-1">R$ 219,00</p>
+                    <button onclick="adicionarCarrinho('Hub USB-C')"
+                        class="w-full border border-border text-sm py-2 mt-4 uppercase tracking-widest hover:bg-volt hover:text-black hover:border-volt transition">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section id="contato" class="py-24 px-8">
+        <div class="max-w-lg mx-auto">
+            <h2 class="text-4xl font-black mb-2">Contato</h2>
+            <p class="text-zinc-600 text-sm mb-12">Formulário completo. Ninguém vai responder.</p>
+
+            <form id="form-contato" onsubmit="enviarForm(event)" class="space-y-6">
+                <div>
+                    <label class="block text-xs text-zinc-600 uppercase tracking-widest mb-2">Nome completo</label>
+                    <input type="text" id="nome" name="nome" placeholder="Seu nome"
+                        class="w-full bg-surface border border-border text-white px-4 py-3 text-sm focus:outline-none focus:border-volt placeholder-zinc-700">
+                </div>
+                <div>
+                    <label class="block text-xs text-zinc-600 uppercase tracking-widest mb-2">E-mail</label>
+                    <input type="email" id="email" name="email" placeholder="seu@email.com"
+                        class="w-full bg-surface border border-border text-white px-4 py-3 text-sm focus:outline-none focus:border-volt placeholder-zinc-700">
+                </div>
+                <div>
+                    <label class="block text-xs text-zinc-600 uppercase tracking-widest mb-2">Assunto</label>
+                    <select id="assunto" name="assunto"
+                        class="w-full bg-surface border border-border text-white px-4 py-3 text-sm focus:outline-none focus:border-volt cursor-pointer">
+                        <option value="">Selecione um assunto</option>
+                        <option value="duvida">Dúvida</option>
+                        <option value="reclamacao">Reclamação</option>
+                        <option value="elogio">Elogio</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-zinc-600 uppercase tracking-widest mb-2">Mensagem</label>
+                    <textarea id="mensagem" name="mensagem" placeholder="Escreva aqui..." rows="4"
+                        class="w-full bg-surface border border-border text-white px-4 py-3 text-sm focus:outline-none focus:border-volt placeholder-zinc-700 resize-none"></textarea>
+                </div>
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="aceitar-termos" name="termos" class="w-4 h-4 accent-volt cursor-pointer">
+                    <label for="aceitar-termos" class="text-xs text-zinc-500 cursor-pointer">Aceito os termos de uso
+                        fictícios</label>
+                </div>
+                <button type="submit"
+                    class="w-full bg-volt text-black font-black py-4 text-sm uppercase tracking-[3px] hover:bg-white transition">
+                    Enviar mensagem
+                </button>
+                <div id="success-msg" class="hidden border border-volt text-volt px-4 py-3 text-sm tracking-widest">
+                    ✓ Mensagem enviada com sucesso!
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <footer class="border-t border-border py-10 text-center text-zinc-700 text-xs tracking-widest uppercase">
+        VOLTR © 2026 — Site fictício para testes de automação — easybrawto
+    </footer>
+
+    <!-- POPUP COOKIE -->
+    <div id="popup-cookie" class="hidden fixed bottom-8 left-8 max-w-sm bg-surface border border-border p-6 z-50">
+        <p class="text-xs text-zinc-500 leading-relaxed mb-4">Cookies fictícios para uma experiência imaginária melhor.
+        </p>
+        <div class="flex gap-3">
+            <button onclick="fecharCookie()"
+                class="bg-volt text-black text-xs font-bold px-4 py-2 uppercase tracking-widest hover:bg-white transition">Aceitar
+                cookies</button>
+            <button onclick="fecharCookie()"
+                class="border border-border text-zinc-500 text-xs px-4 py-2 uppercase tracking-widest hover:border-zinc-500 transition">Rejeitar</button>
+        </div>
+    </div>
+
+    <!-- POPUP NEWSLETTER -->
+    <div id="popup-newsletter" class="hidden fixed inset-0 bg-black/80 z-50 items-center justify-center">
+        <div class="bg-surface border border-border p-12 max-w-sm w-11/12 text-center">
+            <h3 class="text-2xl font-black mb-3">Ei, não vai embora!</h3>
+            <p class="text-zinc-500 text-xs leading-relaxed mb-6">Cadastre-se e receba ofertas que não existem.</p>
+            <input type="email" id="email-newsletter" name="email-newsletter" placeholder="seu@email.com"
+                aria-label="E-mail para newsletter"
+                class="w-full bg-dark border border-border text-white px-4 py-3 text-sm focus:outline-none focus:border-volt placeholder-zinc-700 mb-3">
+            <button onclick="fecharNewsletter()"
+                class="w-full bg-volt text-black font-black py-3 text-xs uppercase tracking-widest hover:bg-white transition mb-3">
+                Quero receber!
+            </button>
+            <button onclick="fecharNewsletter()" class="text-zinc-600 text-xs underline hover:text-zinc-400 transition">
+                Agora não
+            </button>
+        </div>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById('popup-cookie').classList.remove('hidden');
+        }, 2000);
+
+        let newsletterMostrado = false;
+        function mostrarNewsletter() {
+            if (newsletterMostrado) return;
+            newsletterMostrado = true;
+            const el = document.getElementById('popup-newsletter');
+            el.classList.remove('hidden');
+            el.classList.add('flex');
+        }
+        setTimeout(mostrarNewsletter, 15000);
+        window.addEventListener('scroll', () => {
+            const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+            if (pct > 0.6) mostrarNewsletter();
+        });
+
+        function fecharCookie() { document.getElementById('popup-cookie').classList.add('hidden'); }
+        function fecharNewsletter() {
+            const el = document.getElementById('popup-newsletter');
+            el.classList.add('hidden');
+            el.classList.remove('flex');
+        }
+
+        function adicionarCarrinho(nome) {
+            alert('Produto adicionado: ' + nome);
+        }
+
+        function filtrarProdutos() {
+            const busca = document.getElementById('campo-busca').value.toLowerCase();
+            document.querySelectorAll('.produto').forEach(p => {
+                const nome = p.querySelector('h3').textContent.toLowerCase();
+                p.style.display = !busca || nome.includes(busca) ? 'block' : 'none';
+            });
+        }
+
+        function enviarForm(e) {
+            e.preventDefault();
+            const msg = document.getElementById('success-msg');
+            msg.classList.remove('hidden');
+            document.getElementById('form-contato').reset();
+            setTimeout(() => msg.classList.add('hidden'), 4000);
+        }
+    </script>
+</body>
+
+</html>

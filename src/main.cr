@@ -29,31 +29,32 @@ module Easybrawto
       puts "\n[run] #{fn_name}"
 
       fn.commands.each do |cmd|
-        # Usar ? em todos os args evita IndexError se argumento estiver faltando
         case cmd.name
-        when "navigate"
-          actions.navigate(cmd.args[0]? || "")
-        when "waitLoad"
-          actions.wait_load
-        when "waitFor"
-          actions.wait_for(cmd.args[0]? || "")
-        when "clickButton"
-          actions.click_button(cmd.args[0]? || "")
-        when "insertText"
-          actions.insert_text(cmd.args[0]? || "", cmd.args[1]? || "")
-        when "pressKey"
-          actions.press_key(cmd.args[0]? || "Enter")
-        when "screenshot"
-          actions.screenshot(cmd.args[0]? || "screenshot.png")
-        when "log"
-          actions.log(cmd.args[0]? || "")
-        when "waitSeconds"
-          actions.wait_seconds(cmd.args[0]?.try(&.to_i?) || 1)
+        when "navigate"      then actions.navigate(cmd.args[0]? || "")
+        when "waitLoad"      then actions.wait_load
+        when "waitFor"       then actions.wait_for(cmd.args[0]? || "")
+        when "waitForText"   then actions.wait_for_text(cmd.args[0]? || "")
+        when "waitSeconds"   then actions.wait_seconds(cmd.args[0]?.try(&.to_i?) || 1)
+        when "clickButton"   then actions.click_button(cmd.args[0]? || "")
+        when "clickIfExists" then actions.click_if_exists(cmd.args[0]? || "")
+        when "insertText"    then actions.insert_text(cmd.args[0]? || "", cmd.args[1]? || "")
+        when "clearField"    then actions.clear_field(cmd.args[0]? || "")
+        when "selectOption"  then actions.select_option(cmd.args[0]? || "", cmd.args[1]? || "")
+        when "pressKey"      then actions.press_key(cmd.args[0]? || "Enter")
+        when "scroll"        then actions.scroll(cmd.args[0]? || "down", cmd.args[1]?.try(&.to_i?) || 300)
+        when "reload"        then actions.reload
+        when "goBack"        then actions.go_back
+        when "goForward"     then actions.go_forward
+        when "getValue"      then actions.get_value(cmd.args[0]? || "")
+        when "getAttribute"  then actions.get_attribute(cmd.args[0]? || "", cmd.args[1]? || "")
+        when "runJS"         then actions.run_js(cmd.args[0]? || "")
+        when "screenshot"    then actions.screenshot(cmd.args[0]? || "screenshot.png")
+        when "log"           then actions.log(cmd.args[0]? || "")
         else
           puts "  [aviso] Comando desconhecido ignorado: '.#{cmd.name}'"
         end
-      end
-    end
+      end # fecha fn.commands.each
+    end   # fecha script.run_order.each
 
     puts "\n[ok] Script finalizado."
     process.terminate
