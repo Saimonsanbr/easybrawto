@@ -97,37 +97,20 @@ Requires Chrome, Brave, or Edge installed on your machine.
 
 ---
 
-## Try the test sites first
+## Try the test sites
 
-The repo includes 4 ready-to-run test sites and matching `.auto` scripts — the fastest way to see easybrawto in action without touching a real website.
+Four test sites are live and ready — no setup needed. Each one has three sections that require scrolling, a cookie popup, and a newsletter modal that appears mid-scroll.
 
-```
-testes-exemplos/
-├── level1.html   # Plain HTML + CSS + JS
-├── level2.html   # Tailwind CSS
-├── level3.html   # React (hooks, controlled inputs)
-├── level4.html   # Next.js style (hashed classes, data-attributes)
-└── scripts/
-    ├── level1.auto
-    ├── level2.auto
-    ├── level3.auto
-    └── level4.auto
-```
+| Level | Stack | URL |
+|---|---|---|
+| Level 1 | Plain HTML + CSS + JS | [easybrawto-level1.pages.dev](https://easybrawto-level1.pages.dev) |
+| Level 2 | Tailwind CSS | [easybrawto-level2.pages.dev](https://easybrawto-level2.pages.dev) |
+| Level 3 | React (hooks, controlled inputs) | [easybrawto-level3.pages.dev](https://easybrawto-level3.pages.dev) |
+| Level 4 | Next.js style (hashed classes, data-attributes) | [easybrawto-level4.pages.dev](https://easybrawto-level4.pages.dev) |
 
-Each site has three sections that require scrolling, a cookie popup, and a newsletter modal that appears mid-scroll. The scripts handle all of it — popups, forms, dropdowns, checkboxes, the works.
-
-**Run them locally:**
-
+The matching `.auto` scripts are in `test-scripts/scripts/`. Point them at the live URLs and run:
 ```bash
-# serve the test sites (Python comes pre-installed on macOS)
-cd testes-exemplos
-python3 -m http.server 8080
-```
-
-Then in another terminal:
-
-```bash
-./easybrawto run testes-exemplos/scripts/level1.auto
+./easybrawto run test-scripts/scripts/level1.auto
 ```
 
 The four levels are progressively harder for automation tools — but the `.auto` scripts stay nearly identical across all of them. That's the point.
@@ -136,6 +119,11 @@ The four levels are progressively harder for automation tools — but the `.auto
 > **Level 2** — Tailwind CSS, no IDs on most elements. Forces use of `name` and `aria-label`.
 > **Level 3** — React with controlled inputs and async rendering. Tests framework compatibility.
 > **Level 4** — Next.js style with hashed CSS classes and `data-attributes`. Closest to real production sites.
+
+The sites are also in `test-scripts/` if you want to run them locally:
+```bash
+cd test-scripts && python3 -m http.server 8080
+```
 
 Play with them. Break them. Modify the scripts. It's the best way to understand what easybrawto can and can't do.
 
