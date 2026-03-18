@@ -97,6 +97,50 @@ Requires Chrome, Brave, or Edge installed on your machine.
 
 ---
 
+## Try the test sites first
+
+The repo includes 4 ready-to-run test sites and matching `.auto` scripts — the fastest way to see easybrawto in action without touching a real website.
+
+```
+testes-exemplos/
+├── level1.html   # Plain HTML + CSS + JS
+├── level2.html   # Tailwind CSS
+├── level3.html   # React (hooks, controlled inputs)
+├── level4.html   # Next.js style (hashed classes, data-attributes)
+└── scripts/
+    ├── level1.auto
+    ├── level2.auto
+    ├── level3.auto
+    └── level4.auto
+```
+
+Each site has three sections that require scrolling, a cookie popup, and a newsletter modal that appears mid-scroll. The scripts handle all of it — popups, forms, dropdowns, checkboxes, the works.
+
+**Run them locally:**
+
+```bash
+# serve the test sites (Python comes pre-installed on macOS)
+cd testes-exemplos
+python3 -m http.server 8080
+```
+
+Then in another terminal:
+
+```bash
+./easybrawto run testes-exemplos/scripts/level1.auto
+```
+
+The four levels are progressively harder for automation tools — but the `.auto` scripts stay nearly identical across all of them. That's the point.
+
+> **Level 1** — plain HTML, direct IDs and names. The easiest baseline.
+> **Level 2** — Tailwind CSS, no IDs on most elements. Forces use of `name` and `aria-label`.
+> **Level 3** — React with controlled inputs and async rendering. Tests framework compatibility.
+> **Level 4** — Next.js style with hashed CSS classes and `data-attributes`. Closest to real production sites.
+
+Play with them. Break them. Modify the scripts. It's the best way to understand what easybrawto can and can't do.
+
+---
+
 ## Script syntax
 
 ### Browser setup
@@ -118,17 +162,29 @@ chrome.browser('brave')
 chrome.browser('edge')
 ```
 
-### Commands
+### All commands
 
 | Command | What it does |
 |---|---|
 | `.navigate('url')` | Go to a URL |
 | `.waitLoad()` | Wait for the page to finish loading |
 | `.waitFor('selector')` | Wait for a specific element to appear |
+| `.waitForText('text')` | Wait for a specific text to appear anywhere on the page |
 | `.waitSeconds(n)` | Wait a fixed number of seconds |
-| `.insertText('selector', 'text')` | Type into a field |
+| `.insertText('selector', 'text')` | Type into a field — works with React, Vue, Angular |
+| `.clearField('selector')` | Clear a field before typing |
 | `.clickButton('text or selector')` | Click a button, link, or element |
+| `.clickIfExists('text or selector')` | Click only if the element exists — never fails |
 | `.pressKey('key')` | Press Enter, Tab, Escape... |
+| `.selectOption('selector', 'value')` | Select a dropdown option by visible text |
+| `.checkBox('selector')` | Check a checkbox |
+| `.scroll('direction', amount)` | Scroll the page — `down`, `up`, `top`, `bottom` |
+| `.reload()` | Reload the current page |
+| `.goBack()` | Navigate back in history |
+| `.goForward()` | Navigate forward in history |
+| `.getValue('selector')` | Read the current value of an input field |
+| `.getAttribute('selector', 'attr')` | Read any HTML attribute of an element |
+| `.runJS('code')` | Run arbitrary JavaScript on the page |
 | `.screenshot('file.png')` | Save a screenshot |
 | `.log('message')` | Print a message in the terminal |
 
@@ -141,6 +197,9 @@ chrome.browser('edge')
 | `'#email'` | Element with `id="email"` |
 | `'.submit-btn'` | Element with `class="submit-btn"` |
 | `'Enter your email'` | Input with that placeholder |
+| `'Send message'` | Input with that `aria-label` |
+
+The selector cascade tries multiple strategies automatically — text, name, id, class, placeholder, aria-label — so scripts stay readable without inspecting the DOM for the perfect CSS selector.
 
 ### Functions and run
 
@@ -187,22 +246,80 @@ run login
 
 ---
 
-### Fill a form
+### Fill a complete form
 ```
 chrome.persistProfile('automation')
 
 functions fillForm {
   .navigate('https://site.com/contact')
   .waitLoad()
-  .insertText('#name', 'John Doe')
-  .insertText('#email', 'john@mail.com')
-  .insertText('#message', 'Hello!')
+  .waitSeconds(2)
+  .clickIfExists('Accept cookies')
+  .insertText('nome', 'John Doe')
+  .insertText('email', 'john@mail.com')
+  .selectOption('assunto', 'Support')
+  .insertText('mensagem', 'Hello from easybrawto!')
+  .checkBox('#terms')
   .clickButton('Send')
-  .waitLoad()
+  .waitForText('Message sent')
   .screenshot('sent.png')
 }
 
 run fillForm
+```
+
+---
+
+### Handle popups gracefully
+```
+chrome.persistProfile('my_profile')
+
+functions browse {
+  .navigate('https://site.com')
+  .waitLoad()
+  .waitSeconds(3)
+  .clickIfExists('Accept cookies')
+  .scroll('down', 500)
+  .waitSeconds(2)
+  .clickIfExists('No thanks')
+  .scroll('bottom')
+  .screenshot('result.png')
+}
+
+run browse
+```
+
+---
+
+### Read data from a page
+```
+chrome.persistProfile('my_profile')
+
+functions readData {
+  .navigate('https://site.com/profile')
+  .waitLoad()
+  .getValue('#username')
+  .getAttribute('.profile-link', 'href')
+  .screenshot('profile.png')
+}
+
+run readData
+```
+
+---
+
+### Run custom JavaScript
+```
+chrome.persistProfile('my_profile')
+
+functions customJs {
+  .navigate('https://site.com')
+  .waitLoad()
+  .runJS('document.querySelector(".cookie-banner").remove()')
+  .screenshot('clean.png')
+}
+
+run customJs
 ```
 
 ---
@@ -246,29 +363,32 @@ No WebDriver. No browser extension. No persistent injected scripts.
 
 ---
 
-## Current status — v0.1.0
-
-This is an early release. It works for most common tasks but has rough edges.
+## Current status — v0.2.0
 
 **Working:**
-- navigate, waitLoad, waitFor, waitSeconds
-- insertText — compatible with React, Vue, Angular
-- clickButton — finds by text, aria-label, or CSS selector
-- pressKey
-- screenshot
+- `navigate`, `waitLoad`, `waitFor`, `waitForText`, `waitSeconds`
+- `insertText` — compatible with React, Vue, Angular, Shadow DOM
+- `clearField`, `clickButton`, `clickIfExists`, `pressKey`
+- `selectOption` — by visible text or value
+- `checkBox`
+- `scroll` — down, up, top, bottom
+- `reload`, `goBack`, `goForward`
+- `getValue`, `getAttribute`
+- `runJS` — arbitrary JavaScript escape hatch
+- `screenshot`, `log`
 - Persistent, temporary, and system profiles
 - Chrome, Brave, Edge on macOS
 
-**Known limitations:**
+**Known limitations (maybe you can help me):**
 - No Windows binaries yet
-- No selectOption, checkBox, scroll, hover commands yet
-- waitLoad can be slow on heavy SPAs — use waitFor when possible
+- `waitLoad` can be slow on heavy SPAs — prefer `waitFor` when possible
+- No variables or conditionals in scripts yet
 
-**Coming next:**
-- selectOption, checkBox, scroll, hover
-- Windows support
+**Coming nex if god allows:**
+- `watch()` — background observers that react to popups automatically
+- `rules{}` block — global script behavior configuration
 - Variables in scripts
-- Better error messages
+- Windows support
 
 ---
 
