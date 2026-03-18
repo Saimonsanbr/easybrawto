@@ -1,7 +1,7 @@
 chrome.persistProfile('teste')
 
 functions preencherFormulario {
-  .navigate('http://127.0.0.1:5500/testes-exemplos/level1.html')
+  .navigate('http://localhost:8080/testes-exemplos/level1.html')
   .waitLoad()
   .waitSeconds(3)
   .clickIfExists('Aceitar cookies')

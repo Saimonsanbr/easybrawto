@@ -137,7 +137,6 @@ module Easybrawto
             el.scrollIntoView({ behavior: 'instant', block: 'center' });
             el.focus();
 
-            // usa o setter correto dependendo do tipo do elemento
             var proto = el.tagName === 'TEXTAREA'
               ? HTMLTextAreaElement.prototype
               : HTMLInputElement.prototype;
@@ -198,12 +197,10 @@ module Easybrawto
           (function() {
             var el = null;
 
-            // tenta CSS direto
             if (#{selector.to_json}.startsWith('#') || #{selector.to_json}.startsWith('.')) {
               el = document.querySelector(#{selector.to_json});
             }
 
-            // tenta por name, id, aria-label em selects
             if (!el) {
               var selects = document.querySelectorAll('select');
               for (var s of selects) {
@@ -215,7 +212,6 @@ module Easybrawto
 
             if (!el) return false;
 
-            // tenta por texto visível da opção primeiro
             var opts = Array.from(el.options);
             var opt = opts.find(o => o.text === #{value.to_json})
                   || opts.find(o => o.text.trim() === #{value.to_json}.trim())
@@ -233,6 +229,44 @@ module Easybrawto
         unless found
           puts "\n[ERRO] Dropdown não encontrado ou opção inexistente: '#{selector}' → '#{value}'"
           puts "→ Verifique o name/id do select e o texto exato da opção"
+          exit 1
+        end
+      end
+
+      def check_box(selector : String)
+        return if selector.empty?
+        puts "  .checkBox('#{selector}')"
+
+        js = <<-JS
+          (function() {
+            var el = null;
+
+            if (#{selector.to_json}.startsWith('#') || #{selector.to_json}.startsWith('.')) {
+              el = document.querySelector(#{selector.to_json});
+            }
+
+            if (!el) {
+              el = document.getElementById(#{selector.to_json})
+                || document.querySelector('[name="' + #{selector.to_json} + '"]')
+                || document.querySelector('[aria-label="' + #{selector.to_json} + '"]');
+            }
+
+            if (!el) return false;
+
+            if (!el.checked) {
+              el.click();
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+
+            return true;
+          })()
+        JS
+
+        found = @cdp.eval(js).as_bool? || false
+        unless found
+          puts "\n[ERRO] Checkbox não encontrado: '#{selector}'"
+          puts "→ Use o id: .checkBox('#aceitar-termos')"
+          puts "→ Ou o name: .checkBox('termos')"
           exit 1
         end
       end

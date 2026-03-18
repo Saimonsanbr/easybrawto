@@ -39,6 +39,7 @@ module Easybrawto
         when "clickIfExists" then actions.click_if_exists(cmd.args[0]? || "")
         when "insertText"    then actions.insert_text(cmd.args[0]? || "", cmd.args[1]? || "")
         when "clearField"    then actions.clear_field(cmd.args[0]? || "")
+        when "checkBox"      then actions.check_box(cmd.args[0]? || "")
         when "selectOption"  then actions.select_option(cmd.args[0]? || "", cmd.args[1]? || "")
         when "pressKey"      then actions.press_key(cmd.args[0]? || "Enter")
         when "scroll"        then actions.scroll(cmd.args[0]? || "down", cmd.args[1]?.try(&.to_i?) || 300)
