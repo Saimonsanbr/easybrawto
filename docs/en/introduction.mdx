@@ -3,16 +3,9 @@ title: "Introduction"
 description: "Simple browser automation via CDP — no WebDriver, no Selenium, just a binary and a .auto file"
 ---
 
-<img
-  className="block"
-  src="/images/logo.png"
-  alt="easybrawto"
-  width="80"
-/>
-
 # easybrawto
 
-**Simple browser automation via CDP.**  
+**Simple browser automation via CDP.**\
 Write a `.auto` script. Run it. Done.
 
 ```bash
@@ -31,9 +24,11 @@ easybrawto speaks directly to Chrome via the **Chrome DevTools Protocol (CDP)** 
   <Card title="No WebDriver" icon="ban">
     Connects to Chrome via CDP directly. Zero Selenium, zero Playwright.
   </Card>
+
   <Card title="Real profiles" icon="user">
     Use persistent profiles to stay logged in between runs.
   </Card>
+
   <Card title="Single binary" icon="bolt">
     Download, chmod, run. No runtime, no npm install, no Python.
   </Card>
@@ -47,9 +42,9 @@ Scripts work in **English, Portuguese, and Japanese**. Same tool, same binary �
 
 <Tabs>
   <Tab title="English">
-    ```
+    ```text
     chrome.persistProfile('my_profile')
-
+    
     functions searchWiki {
       .navigate('https://en.wikipedia.org')
       .waitLoad()
@@ -58,14 +53,14 @@ Scripts work in **English, Portuguese, and Japanese**. Same tool, same binary �
       .screenshot('result.png')
       .log('Done!')
     }
-
+    
     run searchWiki
     ```
   </Tab>
   <Tab title="Português">
-    ```
+    ```text
     navegador.manterPerfil('meu_perfil')
-
+    
     funcoes buscarWiki {
       .navegar('https://pt.wikipedia.org')
       .esperarCarregar()
@@ -74,14 +69,14 @@ Scripts work in **English, Portuguese, and Japanese**. Same tool, same binary �
       .capturarTela('resultado.png')
       .imprimir('Feito!')
     }
-
+    
     rodar buscarWiki
     ```
   </Tab>
   <Tab title="日本語">
-    ```
+    ```text
     chrome.persistProfile('マイプロファイル')
-
+    
     関数 ウィキ検索 {
       .ナビゲート('https://ja.wikipedia.org')
       .読み込み待機()
@@ -90,7 +85,7 @@ Scripts work in **English, Portuguese, and Japanese**. Same tool, same binary �
       .スクリーンショット('結果.png')
       .ログ('完了!')
     }
-
+    
     実行 ウィキ検索
     ```
   </Tab>
