@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-macos-arm64:
-    runs-on: macos-latest
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
       - uses: crystal-lang/install-crystal@v1
@@ -18,7 +18,7 @@ jobs:
           path: easybrawto-macos-arm64
 
   build-macos-x64:
-    runs-on: macos-13  # último runner Intel disponível no GitHub Actions
+    runs-on: macos-26-intel   # novo macos 26 Tahoe
     steps:
       - uses: actions/checkout@v4
       - uses: crystal-lang/install-crystal@v1
