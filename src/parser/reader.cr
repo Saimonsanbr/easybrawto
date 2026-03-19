@@ -122,7 +122,7 @@ module Easybrawto
     end
 
     private def self.parse_command(line : String) : {String, Array(String)}
-      match = line.match(/^\.(\w+)\((.*)\)$/)
+      match = line.match(/^\.(\w+)\((.*)\)$/m)
       return {"unknown", [] of String} unless match
 
       name = match[1]
@@ -130,7 +130,20 @@ module Easybrawto
 
       args = [] of String
 
-      if raw_args.includes?("'")
+      # runJS recebe o conteúdo inteiro — remove só as aspas externas
+      if name == "runJS" || name == "executarJS"
+        code = raw_args
+        # remove aspas duplas externas se houver
+        if code.starts_with?('"') && code.ends_with?('"')
+          code = code[1..-2]
+          # remove aspas simples externas se houver
+        elsif code.starts_with?("'") && code.ends_with?("'")
+          code = code[1..-2]
+        end
+        args << code
+      elsif raw_args.starts_with?('"')
+        raw_args.scan(/"((?:[^"\\]|\\.)*)"/) { |m| args << m[1] }
+      elsif raw_args.includes?("'")
         raw_args.scan(/'([^']*)'/) { |m| args << m[1] }
       elsif !raw_args.empty?
         args << raw_args

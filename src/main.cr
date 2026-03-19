@@ -65,7 +65,10 @@ module Easybrawto
     end
 
     puts "\n[ok] Script finalizado."
-    process.terminate
+    begin
+      process.terminate
+    rescue
+    end
   end
 end
 
