@@ -1,0 +1,51 @@
+navigate:
+  - navegar
+  - irPara
+clickButton:
+  - clicarBotao
+  - clicar
+insertText:
+  - inserirTexto
+  - digitar
+waitLoad:
+  - esperarCarregar
+  - aguardarCarregamento
+waitFor:
+  - esperarPor
+  - aguardarElemento
+waitForText:
+  - esperarTexto
+waitSeconds:
+  - esperarSegundos
+  - aguardar
+clickIfExists:
+  - clicarSeExistir
+clearField:
+  - limparCampo
+selectOption:
+  - selecionarOpcao
+checkBox:
+  - marcarCaixa
+  - marcar
+pressKey:
+  - pressionarTecla
+scroll:
+  - rolar
+reload:
+  - recarregar
+goBack:
+  - voltarPagina
+goForward:
+  - avancarPagina
+getValue:
+  - obterValor
+getAttribute:
+  - obterAtributo
+runJS:
+  - executarJS
+screenshot:
+  - capturarTela
+  - printarTela
+log:
+  - registrar
+  - imprimir

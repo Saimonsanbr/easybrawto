@@ -1,0 +1,35 @@
+navigate:
+  - ナビゲート
+clickButton:
+  - ボタンクリック
+  - クリック
+insertText:
+  - テキスト入力
+waitLoad:
+  - 読み込み待機
+waitFor:
+  - 要素待機
+waitSeconds:
+  - 秒待機
+clickIfExists:
+  - あれば クリック
+clearField:
+  - フィールドクリア
+selectOption:
+  - オプション選択
+checkBox:
+  - チェックボックス
+pressKey:
+  - キー押す
+scroll:
+  - スクロール
+reload:
+  - リロード
+goBack:
+  - 戻る
+goForward:
+  - 進む
+screenshot:
+  - スクリーンショット
+log:
+  - ログ

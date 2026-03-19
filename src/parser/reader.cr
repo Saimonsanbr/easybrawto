@@ -9,6 +9,24 @@ module Easybrawto
       functions : Hash(String, Function),
       run_order : Array(String)
 
+    # Aliases para palavras-chave estruturais
+    STRUCT_ALIASES = {
+      # português
+      "navegador.perfil("          => "chrome.profile(",
+      "navegador.manterPerfil("    => "chrome.persistProfile(",
+      "navegador.perfilTemporario" => "chrome.tempProfile()",
+      "navegador.tipo("            => "chrome.browser(",
+      "funcoes "                   => "functions ",
+      "rodar "                     => "run ",
+
+      # japonês
+      "ブラウザ.プロファイル("   => "chrome.profile(",
+      "ブラウザ.保持プロファイル(" => "chrome.persistProfile(",
+      "ブラウザ.タイプ("      => "chrome.browser(",
+      "関数 "            => "functions ",
+      "実行 "            => "run ",
+    }
+
     def self.parse(filepath : String) : Script
       unless File.exists?(filepath)
         puts "\n[ERRO] Arquivo não encontrado: '#{filepath}'"
@@ -29,7 +47,14 @@ module Easybrawto
         line = raw_line.strip
         next if line.empty? || line.starts_with?("#")
 
-        # chrome.profile('/caminho/base', 'Profile 3')
+        # resolve aliases estruturais antes de qualquer processamento
+        STRUCT_ALIASES.each do |alias_key, canonical|
+          if line.starts_with?(alias_key)
+            line = line.sub(alias_key, canonical)
+            break
+          end
+        end
+
         if line.starts_with?("chrome.profile(")
           args = extract_args(line)
           profile = args[0]?
@@ -90,7 +115,6 @@ module Easybrawto
       match ? match[1] : ""
     end
 
-    # Extrai múltiplos argumentos entre aspas simples
     private def self.extract_args(line : String) : Array(String)
       args = [] of String
       line.scan(/'([^']*)'/) { |m| args << m[1] }

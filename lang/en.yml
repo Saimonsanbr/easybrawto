@@ -1,0 +1,44 @@
+navigate:
+  - navigate
+clickButton:
+  - clickButton
+  - click
+insertText:
+  - insertText
+  - type
+waitLoad:
+  - waitLoad
+waitFor:
+  - waitFor
+waitForText:
+  - waitForText
+waitSeconds:
+  - waitSeconds
+clickIfExists:
+  - clickIfExists
+clearField:
+  - clearField
+selectOption:
+  - selectOption
+checkBox:
+  - checkBox
+pressKey:
+  - pressKey
+scroll:
+  - scroll
+reload:
+  - reload
+goBack:
+  - goBack
+goForward:
+  - goForward
+getValue:
+  - getValue
+getAttribute:
+  - getAttribute
+runJS:
+  - runJS
+screenshot:
+  - screenshot
+log:
+  - log

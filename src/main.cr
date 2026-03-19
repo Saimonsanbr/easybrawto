@@ -2,9 +2,13 @@ require "./browser/launcher"
 require "./cdp/client"
 require "./commands/actions"
 require "./parser/reader"
+require "./lang/loader"
 
 module Easybrawto
-  VERSION = "0.1.0"
+  VERSION = "0.2.0"
+
+  # Carrega aliases uma vez no startup
+  ALIASES = Lang.load_aliases
 
   def self.run(script_path : String)
     puts "easybrawto v#{VERSION}"
@@ -29,7 +33,10 @@ module Easybrawto
       puts "\n[run] #{fn_name}"
 
       fn.commands.each do |cmd|
-        case cmd.name
+        # resolve alias para o comando canônico em inglês
+        cmd_name = ALIASES[cmd.name]? || cmd.name
+
+        case cmd_name
         when "navigate"      then actions.navigate(cmd.args[0]? || "")
         when "waitLoad"      then actions.wait_load
         when "waitFor"       then actions.wait_for(cmd.args[0]? || "")
@@ -39,8 +46,8 @@ module Easybrawto
         when "clickIfExists" then actions.click_if_exists(cmd.args[0]? || "")
         when "insertText"    then actions.insert_text(cmd.args[0]? || "", cmd.args[1]? || "")
         when "clearField"    then actions.clear_field(cmd.args[0]? || "")
-        when "checkBox"      then actions.check_box(cmd.args[0]? || "")
         when "selectOption"  then actions.select_option(cmd.args[0]? || "", cmd.args[1]? || "")
+        when "checkBox"      then actions.check_box(cmd.args[0]? || "")
         when "pressKey"      then actions.press_key(cmd.args[0]? || "Enter")
         when "scroll"        then actions.scroll(cmd.args[0]? || "down", cmd.args[1]?.try(&.to_i?) || 300)
         when "reload"        then actions.reload
@@ -54,8 +61,8 @@ module Easybrawto
         else
           puts "  [aviso] Comando desconhecido ignorado: '.#{cmd.name}'"
         end
-      end # fecha fn.commands.each
-    end   # fecha script.run_order.each
+      end
+    end
 
     puts "\n[ok] Script finalizado."
     process.terminate
