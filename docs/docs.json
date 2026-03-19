@@ -1,10 +1,10 @@
 {
   "name": "easybrawto",
   "logo": {
-    "light": "/images/logo.png",
-    "dark": "/images/logo.png"
+    "light": "logo.png",
+    "dark": "logo.png"
   },
-  "favicon": "/images/logo.png",
+  "favicon": "logo.png",
   "colors": {
     "primary": "#e8ff00",
     "light": "#e8ff00",
