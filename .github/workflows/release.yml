@@ -17,6 +17,17 @@ jobs:
           name: easybrawto-macos-arm64
           path: easybrawto-macos-arm64
 
+  build-macos-x64:
+    runs-on: macos-13  # último runner Intel disponível no GitHub Actions
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crystal-lang/install-crystal@v1
+      - run: crystal build src/main.cr -o easybrawto-macos-x64 --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: easybrawto-macos-x64
+          path: easybrawto-macos-x64
+
   build-linux-x64:
     runs-on: ubuntu-latest
     steps:
@@ -29,7 +40,7 @@ jobs:
           path: easybrawto-linux-x64
 
   release:
-    needs: [build-macos-arm64, build-linux-x64]
+    needs: [build-macos-arm64, build-macos-x64, build-linux-x64]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -39,4 +50,5 @@ jobs:
         with:
           files: |
             easybrawto-macos-arm64/easybrawto-macos-arm64
+            easybrawto-macos-x64/easybrawto-macos-x64
             easybrawto-linux-x64/easybrawto-linux-x64
