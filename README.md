@@ -23,7 +23,7 @@
 
 <br/>
 
-[**📖 Full Documentation & Examples →**](https://github.com/Saimonsanbr/easybrawto/wiki)
+[**📖 Full Documentation & Examples →**](https://easybrawto.mintlify.app)
 &nbsp;&nbsp;
 [**🤖 AI Agent Skill →**](https://github.com/Saimonsanbr/easybrawto/blob/main/ai/SKILL.md)
 
