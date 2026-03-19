@@ -25,7 +25,7 @@
 
 [**📖 Full Documentation & Examples →**](https://github.com/Saimonsanbr/easybrawto/wiki)
 &nbsp;&nbsp;
-[**🤖 AI Agent Skill →**](https://github.com/Saimonsanbr/easybrawto/ai/SKILL.md)
+[**🤖 AI Agent Skill →**](https://github.com/Saimonsanbr/easybrawto/blob/main/ai/SKILL.md)
 
 </div>
 
