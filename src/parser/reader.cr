@@ -9,22 +9,18 @@ module Easybrawto
       functions : Hash(String, Function),
       run_order : Array(String)
 
-    # Aliases para palavras-chave estruturais
     STRUCT_ALIASES = {
-      # português
       "navegador.perfil("          => "chrome.profile(",
       "navegador.manterPerfil("    => "chrome.persistProfile(",
       "navegador.perfilTemporario" => "chrome.tempProfile()",
       "navegador.tipo("            => "chrome.browser(",
       "funcoes "                   => "functions ",
       "rodar "                     => "run ",
-
-      # japonês
-      "ブラウザ.プロファイル("   => "chrome.profile(",
-      "ブラウザ.保持プロファイル(" => "chrome.persistProfile(",
-      "ブラウザ.タイプ("      => "chrome.browser(",
-      "関数 "            => "functions ",
-      "実行 "            => "run ",
+      "ブラウザ.プロファイル("               => "chrome.profile(",
+      "ブラウザ.保持プロファイル("             => "chrome.persistProfile(",
+      "ブラウザ.タイプ("                  => "chrome.browser(",
+      "関数 "                        => "functions ",
+      "実行 "                        => "run ",
     }
 
     def self.parse(filepath : String) : Script
@@ -42,12 +38,30 @@ module Easybrawto
 
       current_function : String? = nil
       current_commands = [] of Command
+      current_multiline : String? = nil
 
       lines.each_with_index do |raw_line, i|
         line = raw_line.strip
+
+        # acumula linhas de comandos multilinha
+        if current_multiline
+          # ignora comentários dentro do multilinha
+          unless line.starts_with?("#")
+            current_multiline = current_multiline.not_nil! + "\n" + line
+          end
+
+          # verifica se parênteses estão balanceados
+          acc = current_multiline.not_nil!
+          if acc.count('(') > 0 && acc.count('(') == acc.count(')')
+            cmd, args = parse_command(acc)
+            current_commands << Command.new(cmd, args)
+            current_multiline = nil
+          end
+          next
+        end
+
         next if line.empty? || line.starts_with?("#")
 
-        # resolve aliases estruturais antes de qualquer processamento
         STRUCT_ALIASES.each do |alias_key, canonical|
           if line.starts_with?(alias_key)
             line = line.sub(alias_key, canonical)
@@ -95,8 +109,17 @@ module Easybrawto
         end
 
         if line.starts_with?(".") && current_function
-          cmd, args = parse_command(line)
-          current_commands << Command.new(cmd, args)
+          open_count = line.count('(')
+          close_count = line.count(')')
+
+          if open_count > 0 && open_count == close_count
+            # comando de linha única — processa direto
+            cmd, args = parse_command(line)
+            current_commands << Command.new(cmd, args)
+          else
+            # comando multilinha — começa a acumular
+            current_multiline = line
+          end
           next
         end
 
@@ -130,13 +153,10 @@ module Easybrawto
 
       args = [] of String
 
-      # runJS recebe o conteúdo inteiro — remove só as aspas externas
       if name == "runJS" || name == "executarJS"
         code = raw_args
-        # remove aspas duplas externas se houver
         if code.starts_with?('"') && code.ends_with?('"')
           code = code[1..-2]
-          # remove aspas simples externas se houver
         elsif code.starts_with?("'") && code.ends_with?("'")
           code = code[1..-2]
         end
