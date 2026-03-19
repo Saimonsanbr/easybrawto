@@ -4,13 +4,14 @@
 
 # easybrawto
 
-**Simple browser automation via CDP**
+**Simple browser automation via CDP — write scripts in your own language**
 
 *A personal project by an enthusiast — contributions welcome!*
 
 [![Release](https://img.shields.io/github/v/release/Saimonsanbr/easybrawto?style=flat-square&color=black)](https://github.com/Saimonsanbr/easybrawto/releases/latest)
 [![License](https://img.shields.io/badge/license-MIT-black?style=flat-square)](LICENSE)
 [![Built with Crystal](https://img.shields.io/badge/built_with-Crystal-black?style=flat-square)](https://crystal-lang.org)
+[![Languages](https://img.shields.io/badge/scripts-EN%20%7C%20PT--BR%20%7C%20JP-black?style=flat-square)](#multilingual-scripts)
 
 <br/>
 
@@ -19,6 +20,10 @@
 [**⬇ Download for macOS (Intel)**](https://github.com/Saimonsanbr/easybrawto/releases/latest/download/easybrawto-macos-x64)
 &nbsp;&nbsp;
 [**⬇ Download for Linux**](https://github.com/Saimonsanbr/easybrawto/releases/latest/download/easybrawto-linux-x64)
+
+<br/>
+
+[**📖 Full Documentation & Examples →**](https://github.com/Saimonsanbr/easybrawto/wiki)
 
 </div>
 
@@ -126,6 +131,66 @@ cd test-scripts && python3 -m http.server 8080
 ```
 
 Play with them. Break them. Modify the scripts. It's the best way to understand what easybrawto can and can't do.
+
+---
+
+## Multilingual scripts
+
+easybrawto supports writing `.auto` scripts in **English, Portuguese (PT-BR), and Japanese**. No configuration needed — just write in your language and it works.
+
+The same script in three languages:
+
+**English**
+```
+chrome.persistProfile('my_profile')
+
+functions searchSite {
+  .navigate('https://example.com')
+  .waitLoad()
+  .insertText('search', 'Crystal')
+  .clickButton('Search')
+  .screenshot('result.png')
+  .log('Done!')
+}
+
+run searchSite
+```
+
+**Português (PT-BR)**
+```
+navegador.manterPerfil('meu_perfil')
+
+funcoes buscarSite {
+  .navegar('https://example.com')
+  .esperarCarregar()
+  .inserirTexto('search', 'Crystal')
+  .clicarBotao('Buscar')
+  .capturarTela('resultado.png')
+  .imprimir('Funcionou!')
+}
+
+rodar buscarSite
+```
+
+**日本語**
+```
+chrome.persistProfile('マイプロファイル')
+
+関数 サイト検索 {
+  .ナビゲート('https://example.com')
+  .読み込み待機()
+  .テキスト入力('search', 'Crystal')
+  .ボタンクリック('検索')
+  .スクリーンショット('結果.png')
+  .ログ('完了!')
+}
+
+実行 サイト検索
+```
+
+Languages can even be mixed in the same script — each line is resolved independently. The `lang/` folder contains YAML files mapping aliases to canonical commands. Adding a new language is just creating a new `.yml` file.
+
+> **Full command reference for each language** → [Documentation](https://github.com/Saimonsanbr/easybrawto/wiki)
 
 ---
 
@@ -366,23 +431,27 @@ No WebDriver. No browser extension. No persistent injected scripts.
 - `screenshot`, `log`
 - Persistent, temporary, and system profiles
 - Chrome, Brave, Edge on macOS
+- **Multilingual scripts — English, Portuguese, Japanese**
 
-**Known limitations (maybe you can help me):**
+**Known limitations (maybe you can help):**
 - No Windows binaries yet
 - `waitLoad` can be slow on heavy SPAs — prefer `waitFor` when possible
 - No variables or conditionals in scripts yet
 
-**Coming nex if god allows:**
+**Coming next if god allows:**
 - `watch()` — background observers that react to popups automatically
 - `rules{}` block — global script behavior configuration
 - Variables in scripts
 - Windows support
+- More languages in `lang/`
 
 ---
 
 ## Contributing
 
 Issues and PRs are welcome. I'm not an expert in Crystal — if you see something wrong or have a better approach, please open an issue or send a PR. This project exists because I needed it, and it'll get better with help.
+
+Want to add a new language? Just create `lang/your-language.yml` with the command aliases and open a PR. That's it.
 
 ---
 
