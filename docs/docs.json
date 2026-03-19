@@ -1,156 +1,74 @@
 {
-    "name": "easybrawto",
-    "logo": {
-        "light": "/images/logo.png",
-        "dark": "/images/logo.png"
-    },
-    "favicon": "/images/logo.png",
-    "colors": {
-        "primary": "#e8ff00",
-        "light": "#e8ff00",
-        "dark": "#b5cc00",
-        "background": {
-            "dark": "#0f0f0f"
-        }
-    },
-    "theme": "prism",
-    "darkMode": true,
-    "backgroundImage": "/images/background.png",
-    "topbarLinks": [
-        {
-            "name": "GitHub",
-            "url": "https://github.com/Saimonsanbr/easybrawto"
-        }
-    ],
-    "topbarCtaButton": {
-        "name": "Download",
-        "url": "https://github.com/Saimonsanbr/easybrawto/releases/latest"
-    },
-    "anchors": [
-        {
-            "name": "GitHub",
-            "icon": "github",
-            "url": "https://github.com/Saimonsanbr/easybrawto"
-        },
-        {
-            "name": "Releases",
-            "icon": "download",
-            "url": "https://github.com/Saimonsanbr/easybrawto/releases"
-        }
-    ],
-    "i18n": [
-        {
-            "locale": "en",
-            "name": "English"
-        },
-        {
-            "locale": "pt",
-            "name": "Português"
-        },
-        {
-            "locale": "jp",
-            "name": "日本語"
-        }
-    ],
-    "navigation": [
-        {
-            "language": "en",
-            "groups": [
-                {
-                    "group": "Getting Started",
-                    "pages": [
-                        "en/introduction",
-                        "en/quickstart",
-                        "en/how-it-works"
-                    ]
-                },
-                {
-                    "group": "Commands",
-                    "pages": [
-                        "en/commands/navigation",
-                        "en/commands/waiting",
-                        "en/commands/clicking",
-                        "en/commands/typing",
-                        "en/commands/forms",
-                        "en/commands/scrolling",
-                        "en/commands/reading",
-                        "en/commands/utilities"
-                    ]
-                },
-                {
-                    "group": "Guides",
-                    "pages": [
-                        "en/guides/profiles",
-                        "en/guides/popups",
-                        "en/guides/react-vue",
-                        "en/guides/selectors",
-                        "en/guides/debugging"
-                    ]
-                },
-                {
-                    "group": "For AI Agents",
-                    "pages": [
-                        "en/for-ai-agents"
-                    ]
-                }
-            ]
-        },
-        {
-            "language": "pt",
-            "groups": [
-                {
-                    "group": "Começando",
-                    "pages": [
-                        "pt/introduction",
-                        "pt/quickstart",
-                        "pt/how-it-works"
-                    ]
-                },
-                {
-                    "group": "Comandos",
-                    "pages": [
-                        "pt/commands/navigation",
-                        "pt/commands/waiting",
-                        "pt/commands/clicking",
-                        "pt/commands/typing",
-                        "pt/commands/forms",
-                        "pt/commands/scrolling",
-                        "pt/commands/reading",
-                        "pt/commands/utilities"
-                    ]
-                },
-                {
-                    "group": "Guias",
-                    "pages": [
-                        "pt/guides/profiles",
-                        "pt/guides/popups",
-                        "pt/guides/react-vue",
-                        "pt/guides/selectors",
-                        "pt/guides/debugging"
-                    ]
-                },
-                {
-                    "group": "Para Agentes de IA",
-                    "pages": [
-                        "pt/for-ai-agents"
-                    ]
-                }
-            ]
-        },
-        {
-            "language": "jp",
-            "groups": [
-                {
-                    "group": "はじめに",
-                    "pages": [
-                        "jp/introduction",
-                        "jp/quickstart"
-                    ]
-                }
-            ]
-        }
-    ],
-    "footerSocials": {
-        "github": "https://github.com/Saimonsanbr/easybrawto"
+  "name": "easybrawto",
+  "logo": {
+    "light": "/images/logo.png",
+    "dark": "/images/logo.png"
+  },
+  "favicon": "/images/logo.png",
+  "colors": {
+    "primary": "#e8ff00",
+    "light": "#e8ff00",
+    "dark": "#b5cc00"
+  },
+  "theme": "mint",
+  "topbarLinks": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/Saimonsanbr/easybrawto"
     }
+  ],
+  "topbarCtaButton": {
+    "name": "Download",
+    "url": "https://github.com/Saimonsanbr/easybrawto/releases/latest"
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "English",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "en/introduction",
+              "en/quickstart",
+              "en/how-it-works"
+            ]
+          },
+          {
+            "group": "Commands",
+            "pages": [
+              "en/commands/navigation"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Português",
+        "groups": [
+          {
+            "group": "Começando",
+            "pages": [
+              "pt/introduction",
+              "pt/quickstart"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "日本語",
+        "groups": [
+          {
+            "group": "はじめに",
+            "pages": [
+              "jp/introduction",
+              "jp/quickstart"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footerSocials": {
+    "github": "https://github.com/Saimonsanbr/easybrawto"
+  }
 }
