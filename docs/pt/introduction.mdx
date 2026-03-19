@@ -1,0 +1,109 @@
+---
+title: "Introdução"
+description: "Automação de navegador via CDP — sem WebDriver, sem Selenium, só um binário e um arquivo .auto"
+---
+
+<img
+  className="block"
+  src="/images/logo.png"
+  alt="easybrawto"
+  width="80"
+/>
+
+# easybrawto
+
+**Automação de navegador simples via CDP.**  
+Escreve um script `.auto`. Roda. Pronto.
+
+```bash
+./easybrawto run script.auto
+```
+
+---
+
+## O que faz diferente
+
+A maioria das ferramentas de automação injeta bridges de JavaScript, usa WebDrivers ou deixa rastros detectáveis no navegador. Sites que odeiam bots bloqueiam isso imediatamente.
+
+O easybrawto fala diretamente com o Chrome via **Chrome DevTools Protocol (CDP)** — o mesmo protocolo interno que o DevTools do próprio navegador usa. Controla um navegador real com um perfil real. Sem injeção. Sem wrapper. Sem driver entre você e o navegador.
+
+<CardGroup cols={3}>
+  <Card title="Sem WebDriver" icon="ban">
+    Conecta ao Chrome via CDP diretamente. Zero Selenium, zero Playwright.
+  </Card>
+  <Card title="Perfis reais" icon="user">
+    Use perfis persistentes para continuar logado entre execuções.
+  </Card>
+  <Card title="Binário único" icon="bolt">
+    Baixa, chmod, roda. Sem runtime, sem npm install, sem Python.
+  </Card>
+</CardGroup>
+
+---
+
+## Escreva scripts no seu idioma
+
+Os scripts funcionam em **inglês, português e japonês**. Mesma ferramenta, mesmo binário — escreve no que for mais natural pra você.
+
+<Tabs>
+  <Tab title="Português">
+    ```
+    navegador.manterPerfil('meu_perfil')
+
+    funcoes buscarWiki {
+      .navegar('https://pt.wikipedia.org')
+      .esperarCarregar()
+      .inserirTexto('search', 'Linguagem Crystal')
+      .clicarBotao('Procurar')
+      .capturarTela('resultado.png')
+      .imprimir('Feito!')
+    }
+
+    rodar buscarWiki
+    ```
+  </Tab>
+  <Tab title="English">
+    ```
+    chrome.persistProfile('my_profile')
+
+    functions searchWiki {
+      .navigate('https://en.wikipedia.org')
+      .waitLoad()
+      .insertText('search', 'Crystal language')
+      .clickButton('Search')
+      .screenshot('result.png')
+      .log('Done!')
+    }
+
+    run searchWiki
+    ```
+  </Tab>
+  <Tab title="日本語">
+    ```
+    chrome.persistProfile('マイプロファイル')
+
+    関数 ウィキ検索 {
+      .ナビゲート('https://ja.wikipedia.org')
+      .読み込み待機()
+      .テキスト入力('search', 'Crystal言語')
+      .ボタンクリック('検索')
+      .スクリーンショット('結果.png')
+      .ログ('完了!')
+    }
+
+    実行 ウィキ検索
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Uma nota honesta
+
+Esse é um projeto pessoal. Não sou desenvolvedor profissional — criei o easybrawto porque precisava de automação que não fosse bloqueada, e queria algo simples o suficiente para escrever na mão ou pedir para uma IA escrever.
+
+Funciona para a maioria das tarefas comuns. Provavelmente tem bugs. Se encontrar algum, abre uma issue ou manda um PR — ainda estou aprendendo Crystal e agradeço genuinamente a ajuda.
+
+<Card title="GitHub →" icon="github" href="https://github.com/Saimonsanbr/easybrawto">
+  Código fonte, issues e releases
+</Card>

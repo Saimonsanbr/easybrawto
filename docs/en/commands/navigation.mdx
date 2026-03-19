@@ -1,0 +1,113 @@
+---
+title: "Navigation"
+description: "Commands for moving between pages and controlling browser history"
+---
+
+## .navigate()
+
+Goes to a URL. Waits for the page to finish loading before continuing.
+
+```
+.navigate('https://example.com')
+.navigate('https://pt.wikipedia.org')
+.navigate('chrome://history')
+```
+
+**Internally:**
+1. Sends `Page.navigate` via CDP
+2. Waits 2 seconds for the browser to start the navigation
+3. Polls `document.readyState` until `complete` or `interactive`
+
+<Warning>
+  On heavy SPAs (React, Vue, Next.js), `readyState` becomes `complete` before the content renders. Use `.waitFor('#some-element')` after navigating to wait for something concrete.
+</Warning>
+
+---
+
+## .reload()
+
+Reloads the current page and waits for it to finish loading.
+
+```
+.reload()
+```
+
+---
+
+## .goBack()
+
+Navigates back in browser history. Equivalent to pressing the back button.
+
+```
+.goBack()
+```
+
+<Note>
+  If there's no history to go back to, easybrawto prints a warning and continues without failing.
+</Note>
+
+---
+
+## .goForward()
+
+Navigates forward in browser history.
+
+```
+.goForward()
+```
+
+---
+
+## Patterns
+
+### Navigate and wait for specific content
+
+```
+functions openDashboard {
+  .navigate('https://app.example.com/dashboard')
+  .waitFor('#dashboard-content')        # wait for React to render
+  .screenshot('dashboard.png')
+}
+```
+
+### Navigate through a multi-page flow
+
+```
+functions multiStep {
+  .navigate('https://site.com/step1')
+  .waitLoad()
+  .clickButton('Next')
+  .waitFor('#step2-form')
+  .insertText('name', 'John')
+  .clickButton('Next')
+  .waitForText('Step 3')
+  .screenshot('step3.png')
+}
+```
+
+### Use Chrome internal pages
+
+```
+functions openHistory {
+  .navigate('chrome://history')
+  .waitLoad()
+  .screenshot('history.png')
+}
+
+functions openSettings {
+  .navigate('chrome://settings')
+  .waitLoad()
+  .screenshot('settings.png')
+}
+```
+
+---
+
+## Language aliases
+
+| English | Português | 日本語 |
+|---------|-----------|--------|
+| `.navigate` | `.navegar` / `.irPara` | `.ナビゲート` |
+| `.reload` | `.recarregar` | `.リロード` |
+| `.goBack` | `.voltarPagina` | `.戻る` |
+| `.goForward` | `.avancarPagina` | `.進む` |

@@ -1,0 +1,80 @@
+---
+title: "クイックスタート"
+description: "ダウンロードして、最初のスクリプトを書いて、5分以内に実行"
+---
+
+## 1. バイナリをダウンロード
+
+<Tabs>
+  <Tab title="macOS (Apple Silicon)">
+    ```bash
+    curl -L https://github.com/Saimonsanbr/easybrawto/releases/latest/download/easybrawto-macos-arm64 -o easybrawto
+    chmod +x easybrawto
+    ```
+  </Tab>
+  <Tab title="macOS (Intel)">
+    ```bash
+    curl -L https://github.com/Saimonsanbr/easybrawto/releases/latest/download/easybrawto-macos-x64 -o easybrawto
+    chmod +x easybrawto
+    ```
+  </Tab>
+  <Tab title="Linux">
+    ```bash
+    curl -L https://github.com/Saimonsanbr/easybrawto/releases/latest/download/easybrawto-linux-x64 -o easybrawto
+    chmod +x easybrawto
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  **Chrome、Brave、またはEdge**がマシンにインストールされている必要があります。Chromiumベースのブラウザである必要があります — Firefoxはサポートされていません。
+</Note>
+
+---
+
+## 2. 最初のスクリプトを書く
+
+`最初のスクリプト.auto`というファイルを作成します:
+
+```
+chrome.persistProfile('マイプロファイル')
+
+関数 グーグルを開く {
+  .ナビゲート('https://google.com')
+  .読み込み待機()
+  .スクリーンショット('google.png')
+  .ログ('動いた!')
+}
+
+実行 グーグルを開く
+```
+
+---
+
+## 3. 実行する
+
+```bash
+./easybrawto run 最初のスクリプト.auto
+```
+
+---
+
+## コマンドエイリアス（日本語）
+
+| 英語 | 日本語 |
+|------|--------|
+| `.navigate` | `.ナビゲート` |
+| `.waitLoad` | `.読み込み待機` |
+| `.waitFor` | `.要素待機` |
+| `.waitSeconds` | `.秒待機` |
+| `.clickButton` | `.ボタンクリック` / `.クリック` |
+| `.clickIfExists` | `.あれば クリック` |
+| `.insertText` | `.テキスト入力` |
+| `.selectOption` | `.オプション選択` |
+| `.checkBox` | `.チェックボックス` |
+| `.pressKey` | `.キー押す` |
+| `.scroll` | `.スクロール` |
+| `.screenshot` | `.スクリーンショット` |
+| `.log` | `.ログ` |
+| `functions` | `関数` |
+| `run` | `実行` |

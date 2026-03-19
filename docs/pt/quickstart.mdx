@@ -1,0 +1,116 @@
+---
+title: "Início Rápido"
+description: "Baixa, escreve seu primeiro script e roda em menos de 5 minutos"
+---
+
+## 1. Baixa o binário
+
+<Tabs>
+  <Tab title="macOS (Apple Silicon)">
+    ```bash
+    curl -L https://github.com/Saimonsanbr/easybrawto/releases/latest/download/easybrawto-macos-arm64 -o easybrawto
+    chmod +x easybrawto
+    ```
+  </Tab>
+  <Tab title="macOS (Intel)">
+    ```bash
+    curl -L https://github.com/Saimonsanbr/easybrawto/releases/latest/download/easybrawto-macos-x64 -o easybrawto
+    chmod +x easybrawto
+    ```
+  </Tab>
+  <Tab title="Linux">
+    ```bash
+    curl -L https://github.com/Saimonsanbr/easybrawto/releases/latest/download/easybrawto-linux-x64 -o easybrawto
+    chmod +x easybrawto
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  Requer **Chrome, Brave ou Edge** instalado na máquina. Precisa ser um navegador baseado em Chromium — Firefox não é suportado.
+</Note>
+
+---
+
+## 2. Escreve seu primeiro script
+
+Cria um arquivo chamado `primeiro.auto`:
+
+```
+navegador.manterPerfil('meu_perfil')
+
+funcoes abrirGoogle {
+  .navegar('https://google.com')
+  .esperarCarregar()
+  .capturarTela('google.png')
+  .imprimir('Funcionou!')
+}
+
+rodar abrirGoogle
+```
+
+---
+
+## 3. Roda
+
+```bash
+./easybrawto run primeiro.auto
+```
+
+Você deve ver:
+
+```
+easybrawto v0.2.0
+→ Lendo script: primeiro.auto
+[easybrawto] Iniciando chrome...
+[easybrawto] Perfil: /Users/voce/.easybrawto/profiles/meu_perfil/Default
+
+[run] abrirGoogle
+  .navigate('https://google.com')
+  .waitLoad()
+  .screenshot('google.png')
+  [ok] Screenshot salvo: google.png
+  [log] Funcionou!
+
+[ok] Script finalizado.
+```
+
+Um arquivo `google.png` vai aparecer no diretório atual.
+
+---
+
+## 4. Testa nos sites de exemplo
+
+Quatro sites estão hospedados e prontos para automatizar — cada um com popups, formulários e seções roláveis:
+
+| Site | Tecnologia |
+|------|-----------|
+| [easybrawto-level1.pages.dev](https://easybrawto-level1.pages.dev) | HTML puro |
+| [easybrawto-level2.pages.dev](https://easybrawto-level2.pages.dev) | Tailwind CSS |
+| [easybrawto-level3.pages.dev](https://easybrawto-level3.pages.dev) | React |
+| [easybrawto-level4.pages.dev](https://easybrawto-level4.pages.dev) | Estilo Next.js |
+
+Scripts prontos para cada site estão em `test-scripts/scripts/` no repositório.
+
+```bash
+./easybrawto run test-scripts/scripts/pt-br/level1-pt.auto
+```
+
+---
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Comandos →" icon="terminal" href="/pt/commands/navigation">
+    Referência completa de todos os comandos
+  </Card>
+  <Card title="Guias →" icon="book" href="/pt/guides/profiles">
+    Padrões e exemplos do mundo real
+  </Card>
+  <Card title="Multilingue →" icon="globe" href="/pt/guides/selectors">
+    Dicas de seletores para qualquer site
+  </Card>
+  <Card title="Para Agentes de IA →" icon="robot" href="/pt/for-ai-agents">
+    Skill file para Claude, Cursor e outros
+  </Card>
+</CardGroup>

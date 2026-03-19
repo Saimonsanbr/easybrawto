@@ -1,0 +1,61 @@
+---
+title: "はじめに"
+description: "CDP経由のシンプルなブラウザ自動化 — WebDriverなし、Seleniumなし、バイナリと.autoファイルだけ"
+---
+
+<img
+  className="block"
+  src="/images/logo.png"
+  alt="easybrawto"
+  width="80"
+/>
+
+# easybrawto
+
+**CDPによるシンプルなブラウザ自動化。**  
+`.auto`スクリプトを書いて、実行するだけ。
+
+```bash
+./easybrawto run script.auto
+```
+
+---
+
+## 何が違うのか
+
+ほとんどの自動化ツールはJavaScriptブリッジを注入したり、WebDriverを使用したり、検出可能な痕跡をブラウザに残します。ボットを嫌うサイトはすぐにこれをブロックします。
+
+easybrawtoは**Chrome DevTools Protocol（CDP）**を通じてChromeと直接通信します — これはブラウザ自身のDevToolsが使用する内部プロトコルと同じものです。本物のブラウザと本物のプロファイルを制御します。注入なし。ラッパーなし。あなたとブラウザの間にドライバーなし。
+
+---
+
+## あなたの言語でスクリプトを書く
+
+スクリプトは**英語、ポルトガル語、日本語**で動作します。同じツール、同じバイナリ — 自然に感じる言語で書いてください。
+
+```
+chrome.persistProfile('マイプロファイル')
+
+関数 ウィキ検索 {
+  .ナビゲート('https://ja.wikipedia.org')
+  .読み込み待機()
+  .テキスト入力('search', 'Crystal言語')
+  .ボタンクリック('検索')
+  .スクリーンショット('結果.png')
+  .ログ('完了!')
+}
+
+実行 ウィキ検索
+```
+
+---
+
+## 正直なメモ
+
+これは個人プロジェクトです。私はプロの開発者ではありません — ブロックされない自動化が必要だったから、そして手で書くかAIに書いてもらうのに十分シンプルなものが欲しかったからeasybrawtoを作りました。
+
+ほとんどの一般的なタスクで動作します。おそらくバグがあります。見つけた場合は、issueを開くかPRを送ってください。
+
+<Card title="GitHub →" icon="github" href="https://github.com/Saimonsanbr/easybrawto">
+  ソースコード、issue、リリース
+</Card>

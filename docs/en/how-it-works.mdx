@@ -1,0 +1,97 @@
+---
+title: "How it works"
+description: "What happens under the hood when you run a .auto script"
+---
+
+## The flow
+
+When you run `./easybrawto run script.auto`, this is what happens:
+
+<Steps>
+  <Step title="Parse the script">
+    easybrawto reads your `.auto` file line by line. It resolves language aliases (so `.navegar` becomes `.navigate`), extracts browser configuration, and builds a map of functions and commands.
+  </Step>
+  <Step title="Launch the browser">
+    Chrome (or Brave/Edge) is started with the `--remote-debugging-port=9222` flag and pointed at your chosen profile directory. This enables the CDP endpoint.
+  </Step>
+  <Step title="Connect via WebSocket">
+    easybrawto connects to `http://localhost:9222/json`, finds the first real page target (ignoring background processes and extensions), and opens a WebSocket connection to it.
+  </Step>
+  <Step title="Enable the Page domain">
+    `Page.enable` is sent to activate CDP events like navigation and load detection.
+  </Step>
+  <Step title="Execute commands in sequence">
+    Each command is translated into CDP calls or JavaScript via `Runtime.evaluate`. Commands wait for a response before the next one runs — there's no async race condition.
+  </Step>
+  <Step title="Close and clean up">
+    After all `run` blocks complete, the browser process is terminated. Persistent profiles keep their data. Temporary profiles are deleted.
+  </Step>
+</Steps>
+
+---
+
+## Why CDP instead of WebDriver
+
+WebDriver (used by Selenium and Playwright) sits between your code and the browser. It adds a detectable layer — many sites check for WebDriver's presence in `navigator.webdriver` and block automated sessions.
+
+CDP is the browser's own internal protocol. It's what Chrome's DevTools uses when you open the inspector. There's no extra process, no injected scripts that persist, and no `navigator.webdriver = true`.
+
+<Note>
+  easybrawto doesn't disable automation flags or spoof user agents. It just doesn't add the signals that most anti-bot systems look for. Using a real persistent profile with real cookies and session history makes it even harder to distinguish from a human session.
+</Note>
+
+---
+
+## How elements are found
+
+easybrawto never relies on a single selector strategy. Every command that interacts with an element runs a cascade:
+
+### For `.clickButton('target')`
+
+```
+1. Exact text match on button, a, input[type=submit], [role=button]
+2. aria-label match
+3. Partial text match (contains)
+4. CSS selector if target starts with # or .
+5. Searches inside iframes and Shadow DOM roots
+```
+
+### For `.insertText('selector', 'value')`
+
+```
+1. name attribute match
+2. placeholder match  
+3. aria-label match
+4. CSS selector if starts with # or .
+5. label[for] association
+6. Deep search through Shadow DOM (recursive)
+```
+
+This means `name` and `aria-label` are the most reliable selectors — they're semantic attributes that developers rarely remove, and they survive CSS framework rebuilds.
+
+---
+
+## How text is inserted
+
+Modern JavaScript frameworks (React, Vue, Angular) don't listen to `.value =` assignments directly — they listen to synthetic events. easybrawto handles this by:
+
+1. Scrolling the element into view
+2. Focusing the element
+3. Setting the value via the **native prototype setter** (not direct assignment)
+4. Dispatching `input` and `change` events with `bubbles: true`
+
+This makes `insertText` compatible with controlled inputs in any JS framework without any special configuration.
+
+---
+
+## Profile system
+
+| Type | Command | Behavior |
+|------|---------|---------|
+| Persistent | `chrome.persistProfile('name')` | Saved to `~/.easybrawto/profiles/name/`. Survives between runs. |
+| System | `chrome.profile('/path', 'Profile 3')` | Uses an existing browser profile. CDP must be allowed. |
+| Temporary | `chrome.tempProfile()` or nothing | Created in `/tmp/easybrawto_*`. Deleted after the run. |
+
+<Warning>
+  Chrome blocks CDP (`--remote-debugging-port`) when the `--user-data-dir` points directly to your real Chrome profile. Use `chrome.persistProfile()` instead — it creates a separate profile in `~/.easybrawto/` that doesn't have this restriction.
+</Warning>
