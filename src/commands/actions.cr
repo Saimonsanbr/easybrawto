@@ -1,4 +1,5 @@
 require "base64"
+require "json"
 
 module Easybrawto
   module Commands
@@ -379,6 +380,139 @@ module Easybrawto
 
       def log(message : String)
         puts "  [log] #{message}"
+      end
+
+      # TODO: revisar este método depois
+      # - adicionar scroll automático antes de capturar (lazy load)
+      # - melhorar deduplicação de elementos
+      # - melhorar detecção de CTA
+      # - adicionar suporte a múltiplos snapshots
+      def scrape_page_to(output_dir : String)
+        return if output_dir.empty?
+        puts "  .scrapePageTo('#{output_dir}')"
+
+        Dir.mkdir_p(output_dir)
+
+        js = <<-JS
+          (function() {
+            const seen = new Set();
+            const interactive = [];
+
+            document.querySelectorAll('a, button, input, textarea, select, [role=button], [role=link], [role=textbox], [role=checkbox]').forEach(el => {
+              if (el.offsetParent === null) return;
+
+              const text = (el.innerText || el.value || el.placeholder || el.getAttribute('aria-label') || el.title || '').trim().replace(/\\s+/g, ' ').substring(0, 60);
+              if (!text && el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') return;
+
+              const dest = el.href
+                ? (el.href.includes('whatsapp') || el.href.includes('wa.me') ? 'wa'
+                  : el.href.startsWith(location.origin) ? el.href.replace(location.origin, '') || '/'
+                  : 'ext')
+                : null;
+
+              const key = el.tagName + '|' + text + '|' + (dest || '');
+              if (seen.has(key)) return;
+              seen.add(key);
+
+              const tag = el.tagName.toLowerCase();
+              let type = 'link';
+              if (tag === 'button' || el.getAttribute('role') === 'button') type = 'btn';
+              if (tag === 'input' || tag === 'textarea') type = 'input';
+              if (tag === 'select') type = 'select';
+              if (text && /falar|whatsapp|contato|contact|fale|agendar|comprar|contratar/i.test(text)) type = 'cta';
+
+              interactive.push({
+                type: type,
+                text: text,
+                dest: dest,
+                id: el.id || null,
+                name: el.name || null,
+                placeholder: el.placeholder || null,
+                aria: el.getAttribute('aria-label') || null
+              });
+            });
+
+            const order = { cta: 0, input: 1, btn: 2, select: 3, link: 4 };
+            interactive.sort((a, b) => (order[a.type] || 9) - (order[b.type] || 9));
+
+            const forms = Array.from(document.forms).map((f, i) => ({
+              id: i + 1,
+              method: (f.method || 'GET').toUpperCase(),
+              action: f.action ? f.action.replace(location.origin, '') || '/' : '/'
+            }));
+
+            return JSON.stringify({
+              url: location.href,
+              title: document.title.trim(),
+              h1: document.querySelector('h1') ? document.querySelector('h1').innerText.trim() : null,
+              interactive: interactive,
+              forms: forms,
+              timestamp: new Date().toISOString()
+            });
+          })()
+        JS
+
+        raw = @cdp.eval(js).as_s? || "{}"
+
+        begin
+          data = JSON.parse(raw)
+
+          # raw.json — estrutura completa legível
+          File.write(File.join(output_dir, "raw.json"), data.to_pretty_json)
+          puts "  [ok] raw.json salvo"
+
+          # llm.txt — DSL compacta para LLMs
+          url = data["url"]?.try(&.as_s?) || ""
+          title = data["title"]?.try(&.as_s?) || ""
+          h1 = data["h1"]?.try(&.as_s?) || ""
+
+          short_url = url.gsub(/https?:\/\/[^\/]+/, "")
+          short_url = "/" if short_url.empty?
+
+          lines = [] of String
+          lines << "P|#{short_url}|#{title[0, 50]}|#{h1[0, 50]}"
+          lines << ""
+          lines << "A|"
+
+          items = data["interactive"]?.try(&.as_a?) || [] of JSON::Any
+          items.each_with_index do |item, idx|
+            type = item["type"]?.try(&.as_s?) || "link"
+            text = item["text"]?.try(&.as_s?) || ""
+            dest = item["dest"]?.try(&.as_s?)
+            name = item["name"]?.try(&.as_s?)
+
+            short_type = case type
+                         when "cta"    then "cta"
+                         when "input"  then "i"
+                         when "btn"    then "b"
+                         when "select" then "s"
+                         else               "l"
+                         end
+
+            parts = ["#{idx + 1}", short_type, text]
+            parts << dest if dest
+            parts << "name=#{name}" if name && type == "input"
+            lines << parts.join("|")
+          end
+
+          forms = data["forms"]?.try(&.as_a?) || [] of JSON::Any
+          unless forms.empty?
+            lines << ""
+            lines << "F|"
+            forms.each do |f|
+              id = f["id"]?.try(&.as_i?) || 0
+              method = f["method"]?.try(&.as_s?) || "GET"
+              action = f["action"]?.try(&.as_s?) || "/"
+              lines << "#{id}|#{method}|#{action}"
+            end
+          end
+
+          File.write(File.join(output_dir, "llm.txt"), lines.join("\n"))
+          puts "  [ok] llm.txt salvo"
+          puts "  [ok] Dados salvos em: #{output_dir}/"
+        rescue ex
+          puts "  [erro] Falha ao processar dados: #{ex.message}"
+        end
       end
 
       private def build_find_js_inline(target : String) : String
