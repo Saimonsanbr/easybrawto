@@ -104,6 +104,69 @@ Requires Chrome, Brave, or Edge installed on your machine.
 
 ---
 
+## CLI commands
+
+easybrawto has a few direct terminal commands — no script needed.
+
+### `open` — create or open a profile
+
+```bash
+./easybrawto open profile_name
+./easybrawto open profile_name brave    # specify browser
+```
+
+Opens a browser window with a persistent profile. If the profile doesn't exist, it creates one. The browser stays open until you press `Ctrl+C`. Use this to log into your accounts once — everything is saved for future script runs.
+
+```
+easybrawto — Gerenciador de perfis
+─────────────────────────────────
+[easybrawto] Abrindo perfil existente: 'work'
+[easybrawto] Navegador aberto com o perfil 'work'
+
+  Faça login nas suas contas normalmente.
+  Tudo ficará salvo para próximas execuções.
+
+  Pressione Ctrl+C para fechar.
+```
+
+Profile data is stored in `~/.easybrawto/profiles/profile_name/`. A metadata file at `~/.easybrawto/profiles.json` keeps track of profile names, creation dates, and last opened time — nothing sensitive.
+
+**Aliases:** `abrir` (PT), `開く` (JP)
+
+---
+
+### `profiles` — list saved profiles
+
+```bash
+./easybrawto profiles
+```
+
+```
+easybrawto — Perfis salvos
+──────────────────────────
+
+  Nome                 Navegador  Criado em              Último uso
+  ──────────────────── ────────── ────────────────────── ──────────────────────
+  work                 chrome     2026-03-20T10:30:00Z   2026-03-20T14:22:00Z
+  personal             brave      2026-03-18T09:15:00Z   2026-03-19T11:00:00Z
+
+Total: 2 perfil(s)
+
+Abrir perfil: ./easybrawto open <nome>
+```
+
+**Aliases:** `perfis` (PT), `プロファイル` (JP)
+
+---
+
+### `run` — run a script
+
+```bash
+./easybrawto run script.auto
+```
+
+---
+
 ## Try the test sites
 
 Four test sites are live and ready — no setup needed. Each one has three sections that require scrolling, a cookie popup, and a newsletter modal that appears mid-scroll.
@@ -192,7 +255,7 @@ chrome.persistProfile('マイプロファイル')
 
 Languages can even be mixed in the same script — each line is resolved independently. The `lang/` folder contains YAML files mapping aliases to canonical commands. Adding a new language is just creating a new `.yml` file.
 
-> **Full command reference for each language** → [Documentation](https://github.com/Saimonsanbr/easybrawto/wiki)
+> **Full command reference for each language** → [Documentation](https://easybrawto.mintlify.app)
 
 ---
 
@@ -239,7 +302,8 @@ chrome.browser('edge')
 | `.goForward()` | Navigate forward in history |
 | `.getValue('selector')` | Read the current value of an input field |
 | `.getAttribute('selector', 'attr')` | Read any HTML attribute of an element |
-| `.runJS('code')` | Run arbitrary JavaScript on the page |
+| `.runJS('code')` | Run arbitrary JavaScript — supports multiline |
+| `.scrapePageTo('folder')` | Save page structure as `raw.json` + `llm.txt` |
 | `.screenshot('file.png')` | Save a screenshot |
 | `.log('message')` | Print a message in the terminal |
 
@@ -346,31 +410,37 @@ run browse
 
 ---
 
-### Read data from a page
+### Scrape page structure for AI agents
 ```
 chrome.persistProfile('my_profile')
 
-functions readData {
-  .navigate('https://site.com/profile')
+functions scrape {
+  .navigate('https://site.com')
   .waitLoad()
-  .getValue('#username')
-  .getAttribute('.profile-link', 'href')
-  .screenshot('profile.png')
+  .scrapePageTo('output/site')
+  .log('Done!')
 }
 
-run readData
+run scrape
 ```
+
+Saves two files in `output/site/`:
+- `raw.json` — full interactive element structure, readable by humans
+- `llm.txt` — compact DSL format optimized for LLMs
 
 ---
 
-### Run custom JavaScript
+### Run custom JavaScript (multiline supported)
 ```
 chrome.persistProfile('my_profile')
 
 functions customJs {
   .navigate('https://site.com')
   .waitLoad()
-  .runJS('document.querySelector(".cookie-banner").remove()')
+  .runJS("(function() {
+    document.querySelector('.cookie-banner').remove();
+    return 'done';
+  })()")
   .screenshot('clean.png')
 }
 
@@ -418,7 +488,7 @@ No WebDriver. No browser extension. No persistent injected scripts.
 
 ---
 
-## Current status — v0.2.0
+## Current status — v0.2.6
 
 **Working:**
 - `navigate`, `waitLoad`, `waitFor`, `waitForText`, `waitSeconds`
@@ -429,14 +499,16 @@ No WebDriver. No browser extension. No persistent injected scripts.
 - `scroll` — down, up, top, bottom
 - `reload`, `goBack`, `goForward`
 - `getValue`, `getAttribute`
-- `runJS` — arbitrary JavaScript escape hatch
+- `runJS` — multiline JavaScript support
+- `scrapePageTo` — saves `raw.json` + `llm.txt` for AI agents
 - `screenshot`, `log`
 - Persistent, temporary, and system profiles
-- Chrome, Brave, Edge on macOS
+- Chrome, Brave, Edge on **macOS and Linux**
 - **Multilingual scripts — English, Portuguese, Japanese**
+- **CLI profile manager** — `open` and `profiles` commands
 
 **Known limitations (maybe you can help):**
-- No Windows binaries yet
+- No Windows support yet
 - `waitLoad` can be slow on heavy SPAs — prefer `waitFor` when possible
 - No variables or conditionals in scripts yet
 
