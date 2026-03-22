@@ -3,6 +3,7 @@ require "./cdp/client"
 require "./commands/actions"
 require "./parser/reader"
 require "./lang/loader"
+require "file_utils"
 
 module Easybrawto
   VERSION = "0.2.0"
@@ -75,18 +76,15 @@ end
 # --- CLI ---
 command = ARGV[0]? || ""
 arg1 = ARGV[1]? || ""
-arg2 = ARGV[2]? || "chrome"
+arg2 = ARGV[2]? || ""
 
 case command
-# Rodar script .auto
 when "run"
   if arg1.empty?
     puts "Uso: easybrawto run <script.auto>"
     exit 1
   end
   Easybrawto.run(arg1)
-
-  # Abrir/criar perfil e manter navegador aberto
 when "open", "abrir", "開く", "열기"
   if arg1.empty?
     puts "Uso: easybrawto open <nome_do_perfil> [browser]"
@@ -96,19 +94,51 @@ when "open", "abrir", "開く", "열기"
     exit 1
   end
   Easybrawto::Browser.open_profile(arg1, arg2.empty? ? "chrome" : arg2)
-
-  # Listar perfis salvos
 when "profiles", "perfis", "プロファイル", "프로필"
   Easybrawto::Browser.list_profiles
-  # Sem argumento ou comando desconhecido
+  # ─── NOVO COMANDO ───────────────────────────────────────────
+when "fullscreenshot"
+  if arg1.empty?
+    puts "Uso: easybrawto fullscreenshot <url> [output.png]"
+    puts "Exemplo: easybrawto fullscreenshot https://exemplo.com"
+    puts "         easybrawto fullscreenshot https://exemplo.com captura.png"
+    exit 1
+  end
+
+  output = arg2.empty? ? "screenshot_#{Time.utc.to_s("%H_%M_%S")}.png" : arg2
+
+  temp_dir = Easybrawto::Browser.temp_profile_dir
+  process = Easybrawto::Browser.launch("chrome", temp_dir)
+  sleep 5.seconds
+
+  cdp = Easybrawto::CDP::Client.new
+  actions = Easybrawto::Commands::Actions.new(cdp)
+
+  actions.full_screenshot(arg1, output)
+
+  begin
+    process.terminate
+    process.wait
+  rescue
+  end
+
+  begin
+    FileUtils.rm_rf(temp_dir)
+    puts "[ok] Perfil temporário removido"
+  rescue
+  end
+
+  puts "\n[ok] Feito: #{output}"
+  # ────────────────────────────────────────────────────────────
 else
   puts ""
   puts "easybrawto v#{Easybrawto::VERSION} — Simple browser automation via CDP"
   puts ""
   puts "Uso:"
-  puts "  easybrawto run <script.auto>          Executa um script de automação"
-  puts "  easybrawto open <perfil> [browser]    Abre ou cria um perfil persistente"
-  puts "  easybrawto profiles                   Lista os perfis salvos"
+  puts "  easybrawto run <script.auto>                    Executa um script de automação"
+  puts "  easybrawto open <perfil> [browser]              Abre ou cria um perfil persistente"
+  puts "  easybrawto profiles                             Lista os perfis salvos"
+  puts "  easybrawto fullscreenshot <url> [output.png]    Captura página inteira como PNG"
   puts ""
   puts "Aliases:"
   puts "  abrir   → open"
@@ -119,5 +149,7 @@ else
   puts "  easybrawto open pessoal brave"
   puts "  easybrawto profiles"
   puts "  easybrawto run meu_script.auto"
+  puts "  easybrawto fullscreenshot https://exemplo.com"
+  puts "  easybrawto fullscreenshot https://exemplo.com captura.png"
   puts ""
 end

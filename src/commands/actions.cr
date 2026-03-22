@@ -382,6 +382,95 @@ module Easybrawto
         puts "  [log] #{message}"
       end
 
+      def full_screenshot(url : String, output : String, max_height : Int32 = 15000)
+        puts "[fullscreenshot] Iniciando captura de: #{url}"
+
+        # 1. Seta viewport padrão 1920x1080
+        @cdp.send("Emulation.setDeviceMetricsOverride", {
+          "width"             => JSON::Any.new(1920_i64),
+          "height"            => JSON::Any.new(1080_i64),
+          "deviceScaleFactor" => JSON::Any.new(1_i64),
+          "mobile"            => JSON::Any.new(false),
+        } of String => JSON::Any)
+
+        # 2. Navega e espera carregar
+        @cdp.send("Page.navigate", {"url" => JSON::Any.new(url)} of String => JSON::Any)
+        sleep 2.seconds
+        wait_load()
+        puts "[fullscreenshot] Página carregada"
+
+        # 3. Lazy loading — scroll até o fim várias vezes com pausa
+        puts "[fullscreenshot] Forçando lazy load..."
+        6.times do |i|
+          @cdp.eval("window.scrollTo(0, document.body.scrollHeight)")
+          sleep 1.5.seconds
+        end
+        @cdp.eval("window.scrollTo(0, 0)")
+        sleep 1.second
+        puts "[fullscreenshot] Lazy load completo"
+
+        # 4. Remove elementos fixed e sticky
+        puts "[fullscreenshot] Removendo elementos fixos..."
+        @cdp.eval(<<-JS)
+          document.querySelectorAll("*").forEach(function(el) {
+            var s = window.getComputedStyle(el);
+            if (s.position === "fixed" || s.position === "sticky") {
+              el.style.position = "absolute";
+            }
+          });
+        JS
+
+        # 5. Lê altura real da página
+        raw_height = @cdp.eval("Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)").as_i? || 1080
+        puts "[fullscreenshot] Altura detectada: #{raw_height}px"
+
+        # 6. Aplica cap de max_height
+        height = [raw_height, max_height].min
+        if height < raw_height
+          puts "[fullscreenshot] Altura limitada a #{max_height}px (página tinha #{raw_height}px)"
+        end
+
+        # 7. Redimensiona viewport para altura total — truque do full screenshot
+        @cdp.send("Emulation.setDeviceMetricsOverride", {
+          "width"             => JSON::Any.new(1920_i64),
+          "height"            => JSON::Any.new(height.to_i64),
+          "deviceScaleFactor" => JSON::Any.new(1_i64),
+          "mobile"            => JSON::Any.new(false),
+        } of String => JSON::Any)
+        sleep 0.5.seconds
+
+        # 8. Tira o screenshot
+        puts "[fullscreenshot] Capturando..."
+        result = @cdp.send("Page.captureScreenshot", {
+          "format" => JSON::Any.new("png"),
+          "clip"   => JSON::Any.new({
+            "x"      => JSON::Any.new(0_i64),
+            "y"      => JSON::Any.new(0_i64),
+            "width"  => JSON::Any.new(1920_i64),
+            "height" => JSON::Any.new(height.to_i64),
+            "scale"  => JSON::Any.new(1_i64),
+          } of String => JSON::Any),
+        } of String => JSON::Any)
+
+        data = result.dig?("result", "data").try(&.as_s?)
+
+        unless data
+          puts "[ERRO] Não foi possível capturar screenshot"
+          exit 1
+        end
+
+        File.write(output, Base64.decode(data))
+        puts "[fullscreenshot] Salvo: #{output} (#{1920}x#{height}px)"
+
+        # 9. Restaura viewport original
+        @cdp.send("Emulation.setDeviceMetricsOverride", {
+          "width"             => JSON::Any.new(1920_i64),
+          "height"            => JSON::Any.new(1080_i64),
+          "deviceScaleFactor" => JSON::Any.new(1_i64),
+          "mobile"            => JSON::Any.new(false),
+        } of String => JSON::Any)
+      end
+
       # TODO: revisar este método depois
       # - adicionar scroll automático antes de capturar (lazy load)
       # - melhorar deduplicação de elementos

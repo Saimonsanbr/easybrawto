@@ -1,8 +1,8 @@
 ---
 name: easybrawto
-description: "Use this skill whenever you need to write, generate, review, or fix `.auto` scripts for the easybrawto browser automation tool. Triggers include: any request to automate a website, fill a form, click buttons, navigate pages, take screenshots, handle popups, or interact with web elements using easybrawto. Also use when the user asks to translate an existing script to another language (PT-BR or Japanese), debug a failing `.auto` script, or add new automation steps to an existing script. Do NOT use for general web scraping with Python/JavaScript, Selenium, Playwright, or Puppeteer tasks."
-version: 0.2.0
---- 
+description: "Use this skill whenever you need to write, generate, review, or fix `.auto` scripts for the easybrawto browser automation tool. Triggers include: any request to automate a website, fill a form, click buttons, navigate pages, take screenshots, scrape page structure, handle popups, or interact with web elements using easybrawto. Also use when the user asks to translate an existing script to another language (PT-BR or Japanese), debug a failing `.auto` script, or add new automation steps to an existing script. Do NOT use for general web scraping with Python/JavaScript, Selenium, Playwright, or Puppeteer tasks."
+version: 0.2.7
+---
 
 # easybrawto — AI Agent Skill
 
@@ -15,8 +15,9 @@ easybrawto is a CLI tool for browser automation using Chrome DevTools Protocol (
 - Commands inside functions start with `.`
 - String arguments use single quotes `'value'`
 - CSS selectors use `'#id'` or `'.class'` — single quotes required
-- No variables, no conditionals (use `.runJS()` for logic)
+- No variables, no conditionals yet (use `.runJS()` for logic)
 - Commands execute sequentially — each waits for the previous to complete
+- Languages can be mixed in the same script — EN, PT-BR, JP all work simultaneously
 
 ## Script structure
 
@@ -36,22 +37,41 @@ functions functionName {
 run functionName
 ```
 
+## CLI commands (no script needed)
+
+```bash
+# Open or create a persistent profile — browser stays open until Ctrl+C
+./easybrawto open profile_name
+./easybrawto open profile_name brave    # specify browser
+
+# List all saved profiles with metadata
+./easybrawto profiles
+
+# Run a script
+./easybrawto run script.auto
+
+# Capture full page as PNG (lazy load + fixed elements handled automatically)
+./easybrawto fullscreenshot https://site.com
+./easybrawto fullscreenshot https://site.com captura.png   # custom filename
+```
+
+**Aliases:** `abrir` = `open`, `perfis` = `profiles`
+
 ## Browser setup commands
 
 ```
 # Persistent profile — saves cookies, sessions, logins between runs
 chrome.persistProfile('profile_name')
 
-# Specific system profile
+# Specific system profile (base_path, profile_dir)
 chrome.profile('/Users/you/Library/Application Support/Google/Chrome', 'Profile 3')
 
 # Temporary clean profile (default if nothing specified)
 chrome.tempProfile()
 
-# Choose browser
+# Choose browser — default is chrome
 chrome.browser('brave')
 chrome.browser('edge')
-# default: chrome
 ```
 
 ## All commands — reference
@@ -92,11 +112,9 @@ chrome.browser('edge')
 ```
 .selectOption('country', 'Brazil')    # dropdown by visible text
 .selectOption('#select', 'BR')        # dropdown by value
-.checkBox('#terms')                   # check checkbox
-.checkBox('aceitar-termos')           # by name or id
-.pressKey('Enter')                    # keyboard keys
-.pressKey('Tab')
-.pressKey('Escape')
+.checkBox('#terms')                   # check checkbox by id
+.checkBox('aceitar-termos')           # by name attribute
+.pressKey('Enter')                    # keyboard keys: Enter, Tab, Escape, etc
 ```
 
 ### Scrolling
@@ -109,15 +127,50 @@ chrome.browser('edge')
 
 ### Reading data
 ```
-.getValue('#input')                   # prints input value to terminal
-.getAttribute('.link', 'href')        # prints HTML attribute to terminal
+.getValue('#input')                   # prints input field value to terminal
+.getAttribute('.link', 'href')        # prints any HTML attribute to terminal
 ```
+
+### Page scraping for AI agents
+```
+.scrapePageTo('output/folder')        # saves raw.json + llm.txt
+```
+
+Saves two files:
+- `raw.json` — full interactive element structure, readable by humans
+- `llm.txt` — compact DSL format optimized for LLMs (low token cost)
+
+**llm.txt format:**
+```
+P|/path|Page Title|H1 text
+
+A|
+1|cta|Contact Us|/contact
+2|i|Search...|/search|name=q
+3|b|Submit
+4|l|About|/about
+
+F|
+1|GET|/search
+```
+
+Types: `cta` = call-to-action, `i` = input, `b` = button, `s` = select, `l` = link
+
+### JavaScript
+```
+.runJS('document.title')              # single line JS
+.runJS("(function() {                 # multiline JS — use double quotes outside
+  document.querySelector('.banner').remove();
+  return 'done';
+})()")
+```
+
+**Important:** use double quotes `"` for the outer wrapper and single quotes `'` inside the JS code. `return` statements must be inside a function — use IIFE `(function(){ ... })()`.
 
 ### Utilities
 ```
-.screenshot('filename.png')           # save screenshot (absolute or relative path)
+.screenshot('filename.png')           # save screenshot — absolute or relative path
 .log('message')                       # print message to terminal
-.runJS('document.title')              # run arbitrary JavaScript
 ```
 
 ## Selector strategy — how easybrawto finds elements
@@ -125,7 +178,7 @@ chrome.browser('edge')
 For `.clickButton()`, the cascade is:
 1. Exact text match on `button`, `a`, `input[type=submit]`, `[role=button]`
 2. `aria-label` match
-3. Partial text match
+3. Partial text match (contains)
 4. CSS selector if starts with `#` or `.`
 
 For `.insertText()`, the cascade is:
@@ -133,9 +186,9 @@ For `.insertText()`, the cascade is:
 2. `placeholder` match
 3. `aria-label` match
 4. CSS selector if starts with `#` or `.`
-5. Deep search through Shadow DOM
+5. Deep recursive search through Shadow DOM
 
-**Best practice:** prefer `name` and `aria-label` selectors over CSS classes — they are stable across deployments. CSS classes generated by frameworks (Tailwind, CSS Modules) change on every build.
+**Best practice:** prefer `name` and `aria-label` over CSS classes — they survive framework rebuilds. CSS classes from Tailwind, CSS Modules, styled-components change on every build.
 
 ## Common patterns
 
@@ -163,10 +216,10 @@ functions browse {
   .navigate('https://site.com')
   .waitLoad()
   .waitSeconds(3)
-  .clickIfExists('Accept cookies')       # never fails if popup doesn't appear
+  .clickIfExists('Accept cookies')
   .scroll('down', 500)
   .waitSeconds(2)
-  .clickIfExists('No thanks')            # newsletter modal
+  .clickIfExists('No thanks')
   .scroll('bottom')
   .screenshot('page.png')
 }
@@ -196,21 +249,74 @@ functions fillForm {
 run fillForm
 ```
 
+### Scrape page structure for AI decision-making
+```
+chrome.persistProfile('scraper')
+
+functions scrapePage {
+  .navigate('https://site.com')
+  .waitLoad()
+  .waitSeconds(2)
+  .clickIfExists('Accept cookies')
+  .scroll('bottom')
+  .waitSeconds(1)
+  .scrapePageTo('output/site')
+  .log('Scrape complete — check output/site/llm.txt')
+}
+
+run scrapePage
+```
+
+Use `llm.txt` as context for an AI agent to understand the page structure and decide what to automate next.
+
+### Scrape multiple pages
+```
+chrome.persistProfile('scraper')
+
+functions scrapeListPage {
+  .navigate('https://site.com/products')
+  .waitLoad()
+  .scrapePageTo('output/list')
+}
+
+functions scrapeProductPage {
+  .navigate('https://site.com/products/item-1')
+  .waitLoad()
+  .scrapePageTo('output/product-1')
+}
+
+run scrapeListPage
+run scrapeProductPage
+```
+
 ### React/Vue/Angular sites
 ```
-# insertText dispatches native setter + input/change events
-# compatible with all major JS frameworks out of the box
 functions reactForm {
   .navigate('https://react-app.com')
   .waitLoad()
-  .waitFor('#root')                      # wait for React to mount
-  .insertText('#email', 'user@mail.com') # works with controlled inputs
+  .waitFor('#root')
+  .insertText('#email', 'user@mail.com')
   .insertText('#password', 'pass123')
   .clickButton('Submit')
   .waitForText('Success')
 }
 
 run reactForm
+```
+
+### Run custom JavaScript
+```
+functions customJs {
+  .navigate('https://site.com')
+  .waitLoad()
+  .runJS("(function() {
+    var price = document.querySelector('.price').innerText;
+    return price;
+  })()")
+  .screenshot('result.png')
+}
+
+run customJs
 ```
 
 ### Multiple functions in sequence
@@ -227,14 +333,14 @@ functions step2 {
   .insertText('search', 'product name')
   .pressKey('Enter')
   .waitLoad()
-  .screenshot('results.png')
+  .scrapePageTo('output/results')
 }
 
 functions step3 {
-  .scroll('down', 500)
-  .clickButton('Add to cart')
-  .waitForText('Added to cart')
-  .screenshot('cart.png')
+  .navigate('https://site.com/product/1')
+  .waitLoad()
+  .scrapePageTo('output/product')
+  .screenshot('product.png')
 }
 
 run step1
@@ -244,99 +350,110 @@ run step3
 
 ## Multilingual scripts
 
-easybrawto supports English, Portuguese (PT-BR), and Japanese. Each command has aliases in `lang/*.yml`. Languages can be mixed in the same script.
+easybrawto supports English, Portuguese (PT-BR), and Japanese. Languages can be mixed freely.
 
-### PT-BR aliases (most common)
+### PT-BR aliases
 
 | English | Português |
 |---|---|
 | `functions` | `funcoes` |
 | `run` | `rodar` |
 | `chrome.persistProfile` | `navegador.manterPerfil` |
-| `.navigate` | `.navegar` |
-| `.waitLoad` | `.esperarCarregar` |
-| `.waitFor` | `.esperarPor` |
+| `chrome.browser` | `navegador.tipo` |
+| `.navigate` | `.navegar` / `.irPara` |
+| `.waitLoad` | `.esperarCarregar` / `.aguardarCarregamento` |
+| `.waitFor` | `.esperarPor` / `.aguardarElemento` |
 | `.waitForText` | `.esperarTexto` |
-| `.waitSeconds` | `.esperarSegundos` |
-| `.clickButton` | `.clicarBotao` |
+| `.waitSeconds` | `.esperarSegundos` / `.aguardar` |
+| `.clickButton` | `.clicarBotao` / `.clicar` |
 | `.clickIfExists` | `.clicarSeExistir` |
-| `.insertText` | `.inserirTexto` |
+| `.insertText` | `.inserirTexto` / `.digitar` |
+| `.clearField` | `.limparCampo` |
 | `.selectOption` | `.selecionarOpcao` |
-| `.checkBox` | `.marcarCaixa` |
+| `.checkBox` | `.marcarCaixa` / `.marcar` |
 | `.pressKey` | `.pressionarTecla` |
 | `.scroll` | `.rolar` |
-| `.screenshot` | `.capturarTela` |
-| `.log` | `.imprimir` |
+| `.reload` | `.recarregar` |
+| `.goBack` | `.voltarPagina` |
+| `.goForward` | `.avancarPagina` |
+| `.getValue` | `.obterValor` |
+| `.getAttribute` | `.obterAtributo` |
+| `.runJS` | `.executarJS` |
+| `.screenshot` | `.capturarTela` / `.printarTela` |
+| `.log` | `.registrar` / `.imprimir` |
 
 ### PT-BR example
 ```
 navegador.manterPerfil('meu_perfil')
 
-funcoes preencherFormulario {
-  .navegar('https://site.com.br/contato')
+funcoes rasparPagina {
+  .navegar('https://site.com.br')
   .esperarCarregar()
   .esperarSegundos(2)
   .clicarSeExistir('Aceitar cookies')
-  .inserirTexto('nome', 'João Silva')
-  .inserirTexto('email', 'joao@email.com')
-  .selecionarOpcao('assunto', 'Dúvida')
-  .inserirTexto('mensagem', 'Olá!')
-  .marcarCaixa('#termos')
-  .clicarBotao('Enviar')
-  .esperarTexto('Enviado com sucesso')
-  .capturarTela('enviado.png')
-  .imprimir('Formulário enviado!')
+  .rolar('bottom')
+  .scrapePageTo('dados/site')
+  .imprimir('Raspagem concluída!')
 }
 
-rodar preencherFormulario
+rodar rasparPagina
 ```
 
 ## Error messages and what to do
 
 | Error | Cause | Fix |
 |---|---|---|
-| `[ERRO] Elemento não encontrado: 'X'` | Button/element not found | Check text case, add `.waitLoad()` or `.waitFor()` before, use `.screenshot('debug.png')` to inspect |
-| `[ERRO] Campo não encontrado: 'X'` | Input field not found | Use `name` or `#id` selector, check if inside Shadow DOM |
-| `[ERRO] Dropdown não encontrado: 'X'` | Select element not found | Use `name` attribute of the `<select>` element |
+| `[ERRO] Elemento não encontrado: 'X'` | Button/element not found | Check text case, add `.waitLoad()` or `.waitFor()` before, use `.screenshot('debug.png')` |
+| `[ERRO] Campo não encontrado: 'X'` | Input field not found | Use `name` or `#id` selector, check Shadow DOM |
+| `[ERRO] Dropdown não encontrado: 'X'` | Select element not found | Use `name` attribute of the `<select>` |
 | `[ERRO] Checkbox não encontrado: 'X'` | Checkbox not found | Use `#id` or `name` attribute |
-| `[AVISO] Timeout no waitLoad` | Page didn't reach readyState complete | Use `.waitFor('known-selector')` instead |
+| `[AVISO] Timeout no waitLoad` | Page didn't reach readyState | Use `.waitFor('known-selector')` instead |
 | `[ERRO] Timeout: elemento não apareceu` | waitFor timed out | Element may not exist — use `.screenshot('debug.png')` |
-| `[aviso] Comando desconhecido ignorado` | Typo in command name or missing alias | Check spelling, verify alias exists in `lang/*.yml` |
+| `[ERRO] JavaScript: Illegal return statement` | `return` outside function in runJS | Wrap JS in IIFE: `(function(){ ... })()` |
+| `[aviso] Comando desconhecido ignorado` | Typo or missing alias | Check spelling, verify alias in `lang/*.yml` |
 
 ## Debugging tips
 
-1. Add `.screenshot('debug.png')` before any failing command to see what the browser sees
+1. Add `.screenshot('debug.png')` before any failing command
 2. Add `.waitSeconds(3)` after `.navigate()` on slow sites
 3. Use `.waitFor('#known-element')` instead of `.waitLoad()` on SPAs
-4. Use `name` and `aria-label` selectors — they survive CSS framework rebuilds
-5. For React/Vue sites, always `.waitFor('#app')` or `.waitFor('#root')` before interacting
-6. `.clickIfExists()` is safe for optional elements — use it for all popups and modals
+4. Use `name` and `aria-label` selectors — stable across framework rebuilds
+5. For React/Vue sites, `.waitFor('#app')` or `.waitFor('#root')` before interacting
+6. `.clickIfExists()` for all optional elements — popups, modals, cookie banners
+7. Use `.scrapePageTo('debug/')` to understand page structure before writing selectors
+8. For multiline `.runJS()`, always wrap in `(function(){ ... })()`
 
 ## What NOT to do
 
 ```
-# DON'T rely on CSS class selectors from frameworks
-.clickButton('.sc-bdXxxt.hYBOTF')      # breaks on next build
+# DON'T rely on hashed CSS classes from frameworks
+.clickButton('.sc-bdXxxt.hYBOTF')     # breaks on next build
 
 # DO use semantic selectors
-.clickButton('Submit')                  # text
-.insertText('email', 'x@x.com')        # name attribute
-.clickButton('#btn-submit')             # stable id
+.clickButton('Submit')                 # text
+.insertText('email', 'x@x.com')       # name attribute
+.clickButton('#btn-submit')            # stable id
 
-# DON'T use waitSeconds for everything
-.waitSeconds(5)                         # slow and fragile
+# DON'T use waitSeconds as primary wait strategy
+.waitSeconds(5)                        # slow and fragile
 
-# DO wait for specific elements
-.waitFor('#dashboard')                  # fast and reliable
-.waitForText('Welcome back')            # confirms action worked
+# DO wait for specific elements or text
+.waitFor('#dashboard')                 # fast and reliable
+.waitForText('Welcome back')           # confirms action worked
+
+# DON'T use return at top level in runJS
+.runJS('return document.title')        # ERROR: Illegal return statement
+
+# DO wrap in IIFE
+.runJS("(function(){ return document.title; })()")
 ```
 
-## Limitations (as of v0.2.0)
+## Limitations (as of v0.2.6)
 
-- macOS only (Linux binary available but untested on all distros)
-- No Windows support yet
+- No Windows binaries yet (macOS arm64, macOS x64, Linux x64 available)
 - No variables or conditionals — use `.runJS()` for logic
 - No multi-tab coordination yet
-- `waitLoad()` unreliable on heavy SPAs — always prefer `waitFor()`
+- `waitLoad()` unreliable on heavy SPAs — prefer `waitFor()`
 - No file upload support yet
-- No iframe targeting (Shadow DOM is supported via deepQuery)
+- `scrapePageTo` does not auto-scroll before capture (scroll manually first with `.scroll('bottom')`)
+- `fullscreenshot` caps page height at 15000px — pages taller than that are cropped
